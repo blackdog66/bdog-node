@@ -1,0 +1,12 @@
+
+Apply Std.diff to your haxe standard library dir - currently js/Boot.hx and js/Lib.hx are altered.
+
+After applying
+
+haxe -D NODE -js main.js -main Main -cp . Main
+
+to compile main.js
+
+and 
+
+node main.js to execute.

@@ -1,0 +1,76 @@
+diff --git a/js/Boot.hx b/js/Boot.hx
+index 133f12b..27e08b7 100644
+--- a/js/Boot.hx
++++ b/js/Boot.hx
+@@ -25,7 +25,7 @@
+ package js;
+ 
+ class Boot {
+-
++ 
+ 	private static function __unhtml(s : String) {
+ 		return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+ 	}
+@@ -36,7 +36,10 @@ class Boot {
+ 			#if jsfl
+ 			msg += __string_rec(v,"");
+ 			fl.trace(msg);
+-			#else
++			#elseif NODE
++            msg += __string_rec(v,"");
++            node.Node.sys.puts(msg);
++            #else
+ 			msg += __unhtml(__string_rec(v,""))+"<br/>";
+ 			var d = document.getElementById("haxe:trace");
+ 			if( d == null )
+@@ -193,8 +196,10 @@ class Boot {
+ 
+ 	private static function __init() {
+ 		untyped {
++          #if !NODE
+ 			Lib.isIE = (document.all != null && window.opera == null );
+ 			Lib.isOpera = (window.opera != null );
++          #end
+ 			Array.prototype.copy = Array.prototype.slice;
+ 			Array.prototype.insert = function(i,x) {
+ 				this.splice(i,0,x);
+diff --git a/js/Lib.hx b/js/Lib.hx
+index ff74098..6cf8aaa 100644
+--- a/js/Lib.hx
++++ b/js/Lib.hx
+@@ -24,14 +24,18 @@
+  */
+ package js;
+ 
++#if !NODE
+ import js.Dom;
+-
++#end
+ class Lib {
+ 
++#if !NODE
+ 	public static var isIE : Bool;
+ 	public static var isOpera : Bool;
+ 	public static var document : Document;
+ 	public static var window : Window;
++#end
++  
+ 	static var onerror : String -> Array<String> -> Bool = null;
+ 
+ 	public static function alert( v : Dynamic ) {
+@@ -47,6 +51,7 @@ class Lib {
+ 	}
+ 
+ 	static function __init__() untyped {
++#if !NODE
+ 		document = untyped __js__("document");
+ 		window = untyped __js__("window");
+ 		#if debug
+@@ -72,6 +77,7 @@ __js__('onerror = function(msg,url,line) {
+ 		return f(msg,[url+":"+line]);
+ 	}');
+ 		#end
++ #end
+ 	}
+ 
+ }

@@ -76,7 +76,7 @@ typedef EventEmitter = {
   function listeners(event:String):Array<Listener>;
 }
   
-typedef Promise = { EventEmitter,
+typedef Promise = { > EventEmitter,
   function addCallback(d:Dynamic):Void;
   function wait():Dynamic;
   function emitSuccess(d:Dynamic):Void;
@@ -216,7 +216,7 @@ class Node {
   public static var clearTimeout:Int->Void = untyped __js__('clearTimeout');
   public static var setInterval:Void->Void = untyped __js__('setInterval');
   public static var clearInterval:Int->Void = untyped __js__('clearInterval');
-  public static var exec:String->Promise = untyped __js__('exec');                                                          
+  
   public static var GLOBAL:Dynamic = untyped __js__('GLOBAL');
   public static var process:Process = untyped __js__('process');
   public static var sys:Sys = require("sys");
