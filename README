@@ -1,11 +1,7 @@
 
 hxNode is the successor to the over ambitious hxV8.
 
-hxNode provides wrappers to Node.js and a patch to the haxe standard libraries to try and make usage as simple as possible. The standard library requires patching as the haxe javascript target defaults to a browser environment and looks for various browser elements on boot which do not exist.
-
-Apply Std.diff to your haxe standard library dir - currently js/Boot.hx and js/Lib.hx are altered.
-
-After applying
+hxNode provides wrappers to Node.js
 
 haxe -D NODE -js main.js -main Main -cp . Main
 
@@ -14,5 +10,3 @@ to compile main.js
 and 
 
 node main.js to execute.
-
-Given that tweaking the standard library is not a fantastic idea it is probably better to run it in a sandox, my preferred method is to take a copy of the standard libraries, apply the patch to the copy and then set HAXE_LIBRARY_PATH to the new dir, then you know that hxNode is not interfering with any of your other projects.
