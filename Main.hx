@@ -6,6 +6,7 @@ class Main {
   public static
   function main() {
     clientTest();
+    //tcpTest();
   } 
   
   public static function
@@ -41,7 +42,8 @@ class Main {
       sys:Sys = Node.require("sys"),
       http:Http = Node.require("http"),
       google = http.createClient(80, "www.google.cl"),
-      request = google.get("/", {host: "www.google.cl"});
+      request = google.request("GET","/", {host: "www.google.cl"});
+
     
     request.finish(function (response) {
         sys.puts("STATUS: " + response.statusCode);
@@ -51,6 +53,6 @@ class Main {
             sys.puts("BODY: " + chunk);
           });
       });
-
+    
   }
 }

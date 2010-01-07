@@ -145,9 +145,8 @@ typedef ClientRequest={
 }
 
 typedef Client={
-  function get(path:String,?headers:Dynamic):ClientRequest;
+  function request(?method:String,path:String,?headers:Dynamic):ClientRequest;
   function head(path:String,?headers:Dynamic):ClientRequest;
-  function post(path:String,?headers:Dynamic):ClientRequest;
   function del(path:String,?headers:Dynamic):ClientRequest;
   function put(path:String,?headers:Dynamic):ClientRequest;
   function setSecure(fmtType:String,caCerts:String,crlList:String,privKey:String,cert:String):Void;
