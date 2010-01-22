@@ -1,7 +1,6 @@
 
-hxNode is the successor to the over ambitious hxV8.
 
-hxNode provides wrappers to Node.js
+hxNode provides haxe wrappers to Node.js
 
 haxe -D NODE -js main.js -main Main -cp . Main
 
@@ -10,3 +9,38 @@ to compile main.js
 and 
 
 node main.js to execute.
+
+I haven't altered all of the possible problems in the haxe libraries which may affect
+the js target - so you could have problems with that, e.g. http stuff, i decided to just not use it and abstract my stuff at a higher level to use node.
+
+At this point I don't intend to make hxNode compatible with haxe standard libs - the model is very different, and it's small and to the point.
+
+----------------------------------------------
+
+Added Servlet.hx which demonstrates the use of Node Http, and can be used like this ...
+
+ public static function
+  makeGetUsersServlet() {
+    var users = new JSONP(GETUSERS,function(req:IRequest,res:String->Void) {
+        var
+        session = field(req.validated,SESSID),
+        page = Std.parseInt(field(req.params,PAGE)),
+        rows = Std.parseInt(field(req.params,ROWS));
+
+        if (Accounts.roleTrumps(MANAGER,session.role)) {
+          Accounts.usersByPage(page,rows).addCallback(function(users) {
+            res(reply(OK,{users:users}));
+            });
+        } else {
+          res(reply(PERMISSIONS));
+        }
+      });
+    users.required([SESSID,PAGE,ROWS]);
+    users.validate(SESSID,NO_SESSION,Accounts.validateSession);
+  }
+
+create your servlets then fire up the server, e.g.
+
+ new HttpServer(accountServer.host,accountServer.port,"Accounts 0.1");
+
+I like to use lots of enums for param and servlet names so i can guarantee i get the spelling right in client haxe too, this may not be to everyone's taste - the nice thing is it's small and easy to change.

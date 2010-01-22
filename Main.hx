@@ -5,8 +5,9 @@ class Main {
 
   public static
   function main() {
-    clientTest();
+        clientTest();
     //tcpTest();
+    //    flashCrossDomain();
   } 
   
   public static function
@@ -33,6 +34,32 @@ class Main {
     s.listen(5000,"localhost");
     
     trace("here");
+  }
+
+  public static function
+  flashCrossDomain() {
+     var tcp:Tcp = Node.require("tcp");
+    
+    var s = tcp.createServer(function(c:Connection) {
+        c.addListener(Node.CONNECT,function(d) {
+            c.send('<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy
+  SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
+<cross-domain-policy>
+  <allow-access-from domain="*" to-ports="1138,1139,1140" />
+</cross-domain-policy>');
+               c.close();
+          });
+        
+        c.addListener(Node.EOF,function(d) {
+            trace("lost connection");
+            //     c.close();
+          });
+      });
+
+    trace("args[1] "+Node.process.ARGV[2]);
+    s.listen(843,Node.process.ARGV[2]);
+   
   }
 
 

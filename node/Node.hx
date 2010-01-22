@@ -68,51 +68,43 @@ typedef Stats = {
   function isSocket():Bool;
 }
 
-typedef Listener = Dynamic->Void;
+typedef Listener<T> = T->Void;
 
-typedef EventEmitter = {
-  function addListener(event:String,fn:Listener):Void;
-  function removeListener(event:String,listener:Listener):Void;
-  function listeners(event:String):Array<Listener>;
+typedef EventEmitter<T> = {
+  function addListener(event:String,fn:Listener<T>):Void;
+  function removeListener(event:String,listener:Listener<T>):Void;
+  function listeners(event:String):Array<Listener<T>>;
 }
   
-typedef Promise = { > EventEmitter,
-  function addCallback(d:Dynamic):Void;
-  function wait():Dynamic;
+typedef Promise<T> = { > EventEmitter<T>,
+  function addCallback(fn:T->Void):Promise<T>;
+  function addCancelback(fn:T->Void):Promise<T>;
+  function addErrback(fn:T->Void):Promise<T>;
+  function wait():T;
   function emitSuccess(d:Dynamic):Void;
   function emitCancel():Void;
   function emitError():Void;
-  function emit():Void;
-  function addCancelback(fn:Void->Void):Void;
-  function addErrback(fn:Dynamic->Void):Void;
+  function emit():Void;  
   function timeout(t:Int):Void;
 }
 
 typedef Posix = {
-  function unlink(fileName:String):Promise ;
-  function rename(from:String,to:String):Promise;
-  function stat(path:String):Promise;
-  function rmdir(path:String):Promise;
-  function mkdir(path:String,mode:Int):Promise;
-  function readdir(path:String):Promise;
-  function close(fd:Int):Promise;
-  function open(path:String,flags:String,mode:String):Promise;
-  function write(fd:Int,data:String,position:Int,enc:String):Promise;
-  function read(fd:Int,length:Int,position:Int,end:String):Promise;
-  function cat(fileName:String,enc:String):Promise;  
-}
-
-typedef URI = {
-  var full:String;
-  var path:String;
-  var queryString:String;
-  var params:Dynamic;
-  var fragment:String;
+  function unlink(fileName:String):Promise<Void> ;
+  function rename(from:String,to:String):Promise<Void>;
+  function stat(path:String):Promise<Stats>;
+  function rmdir(path:String):Promise<Void>;
+  function mkdir(path:String,mode:Int):Promise<Void>;
+  function readdir(path:String):Promise<Array<String>>;
+  function close(fd:Int):Promise<Void>;
+  function open(path:String,flags:String,mode:String):Promise<Int>;
+  function write(fd:Int,data:String,position:Int,enc:String):Promise<Int>;
+  function read(fd:Int,length:Int,position:Int,end:String):Promise<{data:String,bytesRead:Int}>;
+  function cat(fileName:String,?enc:String):Promise<String>;  
 }
 
 typedef Request ={
   var method:String;
-  var uri:URI;
+  var url:String;
   var headers:Dynamic;
   var httpVersion:String;
   function setBodyEncoding(enc:String):Void;
@@ -127,15 +119,14 @@ typedef Response={
   function sendBody(chunk:String,enc:String):Void;  
 }
 
-typedef ClientResponse= { > EventEmitter,
+typedef ClientResponse = { > EventEmitter<Null<String>>,
   var statusCode:Int;
   var httpVersion:String;
   var headers:Dynamic;
   var client:Client;
   function setBodyEncoding(enc:String):Void;
   function resume():Void;
-  function pause():Void;
-  
+  function pause():Void;  
 }
 
 // chunk Array<Int> or string
@@ -153,13 +144,13 @@ typedef Client={
 }
 
 typedef Http ={
-  function createServer(listener:Request->Response->Void,options:Dynamic):Void;
+  function createServer(listener:Request->Response->Void,?options:Dynamic):Server;
   function createClient(port:Int,host:String):Client;
 }
   
 typedef Connection = {
   function connect(port:Int,host:String):Void;
-  function remoteAddress():String;
+  var remoteAddress:String;
   function readyState():String;
   function setEncoding(s:String):Void;
   function send(d:String,?enc:String):Void;
@@ -211,9 +202,9 @@ class Node {
   public static var DATA = "data";
   
   public static var require:String->Dynamic = untyped __js__('require');
-  public static var setTimeout:Void->Void = untyped __js__('setTimeout');
+  public static var setTimeout:(Void->Void)->Int->Int= untyped __js__('setTimeout');
   public static var clearTimeout:Int->Void = untyped __js__('clearTimeout');
-  public static var setInterval:Void->Void = untyped __js__('setInterval');
+  public static var setInterval:(Void->Void)->Int->Int = untyped __js__('setInterval');
   public static var clearInterval:Int->Void = untyped __js__('clearInterval');
   
   public static var GLOBAL:Dynamic = untyped __js__('GLOBAL');
@@ -223,7 +214,7 @@ class Node {
   public static var toJSON:Dynamic->String = untyped __js__('JSON.stringify');
   public static var fromJSON:Dynamic->String = untyped __js__('JSON.parse');
   
-  public function createPromise():Promise {
+  public static function createPromise<T>():Promise<T> {
     return untyped __js__('new process.Promise()');
   }
 }
