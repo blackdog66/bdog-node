@@ -1,3 +1,0 @@
-These files override the equivalents in the standard library and allow the js target
-to function in a non browser environment.
-

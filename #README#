@@ -1,0 +1,51 @@
+
+
+hxNode provides haxe wrappers to Node.js. 
+
+My goal is to provide haxe with a first class server environment using Node.js as the basis.
+
+You will need my hacks to the haxe standard library, which you will find on github at http://github.com/blackdog66/haxe. All you need to to is copy the std dir from that repo, and then set HAXE_LIBRARY_PATH=/the/tweaked/std/dir, then ...
+
+haxe -D nodejs -js main.js -main Main -cp . Main
+
+to compile main.js
+
+and 
+
+node main.js to execute.
+
+I haven't altered all of the possible problems in the haxe libraries which may affect the js target - so you could have problems with that, e.g. http stuff, i decided to just not use it and abstract my stuff at a higher level to use node.
+
+I have forked haxe as I intend to add the changes to the standard libs as I come to them. I'll will keep this repo synched with the official haxe repo on google code.
+
+
+
+----------------------------------------------
+
+Added Servlet.hx which demonstrates the use of Node Http, and can be used like this ...
+
+ public static function
+  makeGetUsersServlet() {
+    var users = new JSONP(GETUSERS,function(req:IRequest,res:String->Void) {
+        var
+        session = field(req.validated,SESSID),
+        page = Std.parseInt(field(req.params,PAGE)),
+        rows = Std.parseInt(field(req.params,ROWS));
+
+        if (Accounts.roleTrumps(MANAGER,session.role)) {
+          Accounts.usersByPage(page,rows).addCallback(function(users) {
+            res(reply(OK,{users:users}));
+            });
+        } else {
+          res(reply(PERMISSIONS));
+        }
+      });
+    users.required([SESSID,PAGE,ROWS]);
+    users.validate(SESSID,NO_SESSION,Accounts.validateSession);
+  }
+
+create your servlets then fire up the server, e.g.
+
+ new HttpServer(accountServer.host,accountServer.port,"Accounts 0.1");
+
+I like to use lots of enums for param and servlet names so i can guarantee i get the spelling right in client haxe too, this may not be to everyone's taste - the nice thing is it's small and easy to change.
