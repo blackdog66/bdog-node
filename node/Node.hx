@@ -13,18 +13,19 @@ typedef Sys = {
 
 typedef Watch = {persistant:Bool,interval:Int};
 
-typedef StdIO = {
-  function open(enc:String):Void;
+typedef Listener<T> = T->Void;
+
+typedef EventEmitter<T> = {
+  function addListener(event:String,fn:Listener<T>):Dynamic;
+  function removeListener(event:String,listener:Listener<T>):Void;
+  function listeners(event:String):Array<Listener<T>>;
+}
+
+typedef StdIO = { > EventEmitter<Dynamic>,
+  function open(?enc:String):Void;
   function close():Void;
   function write(data:String):Void;
   function writeError(data:String):Void;
-}
-
-typedef ChildProcess = {
-  var pid:Int;
-  function write(data:String,?enc:String):Void;
-  function close():Void;
-  function kill(?signal:String):Void;
 }
 
 typedef Process = {
@@ -42,7 +43,13 @@ typedef Process = {
 
   var stdio:StdIO;
 
-  function createChildProcess(command:String,args:Array<String>,env:Dynamic):ChildProcess;
+  function createChildProcess(command:String,args:Array<String>,?env:Dynamic):ChildProcess;
+  var O_CREAT:Int;
+  var O_APPEND:Int;
+  var O_WRONLY:Int;
+  var O_RDONLY:Int;
+  var O_RDWR:Int;
+  var O_IRWXU:Int;
 }
 
 typedef Stats = {
@@ -67,14 +74,6 @@ typedef Stats = {
   function isFIFO():Bool;
   function isSocket():Bool;
 }
-
-typedef Listener<T> = T->Void;
-
-typedef EventEmitter<T> = {
-  function addListener(event:String,fn:Listener<T>):Void;
-  function removeListener(event:String,listener:Listener<T>):Void;
-  function listeners(event:String):Array<Listener<T>>;
-}
   
 typedef Promise<T> = { > EventEmitter<T>,
   function addCallback(fn:T->Void):Promise<T>;
@@ -96,12 +95,19 @@ typedef Posix = {
   function mkdir(path:String,mode:Int):Promise<Void>;
   function readdir(path:String):Promise<Array<String>>;
   function close(fd:Int):Promise<Void>;
-  function open(path:String,flags:String,mode:String):Promise<Int>;
-  function write(fd:Int,data:String,position:Int,enc:String):Promise<Int>;
+  function open(path:String,flags:Int,mode:Int):Promise<Int>;
+  function write(fd:Int,data:String,?position:Int,?enc:String):Promise<Int>;
   function read(fd:Int,length:Int,position:Int,end:String):Promise<{data:String,bytesRead:Int}>;
   function cat(fileName:String,?enc:String):Promise<String>;  
 }
 
+typedef ChildProcess = { > EventEmitter<Dynamic>,
+  var pid:Int;
+  function write(data:String,?enc:String):Void;
+  function close():Void;
+  function kill(?signal:String):Void;
+}
+  
 typedef Request ={
   var method:String;
   var url:String;
@@ -210,9 +216,10 @@ class Node {
   public static var GLOBAL:Dynamic = untyped __js__('GLOBAL');
   public static var process:Process = untyped __js__('process');
   public static var sys:Sys = require("sys");
+  public static var posix:Posix = require("posix");
 
   public static var toJSON:Dynamic->String = untyped __js__('JSON.stringify');
-  public static var fromJSON:Dynamic->String = untyped __js__('JSON.parse');
+  public static var fromJSON:String->Dynamic = untyped __js__('JSON.parse');
   
   public static function createPromise<T>():Promise<T> {
     return untyped __js__('new process.Promise()');
