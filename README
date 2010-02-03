@@ -1,8 +1,12 @@
 
 
-hxNode provides haxe wrappers to Node.js
+hxNode provides haxe wrappers to Node.js. 
 
-haxe -D NODE -js main.js -main Main -cp . Main
+My goal is to provide haxe with a first class server environment using Node.js as the basis.
+
+You will need my hacks to the haxe standard library, which you will find on github at http://github.com/blackdog66/haxe. All you need to to is copy the std dir from that repo, and then set HAXE_LIBRARY_PATH=/the/tweaked/std/dir, then ...
+
+haxe -D nodejs -js main.js -main Main -cp . Main
 
 to compile main.js
 
@@ -10,10 +14,10 @@ and
 
 node main.js to execute.
 
-I haven't altered all of the possible problems in the haxe libraries which may affect
-the js target - so you could have problems with that, e.g. http stuff, i decided to just not use it and abstract my stuff at a higher level to use node.
+I haven't altered all of the possible problems in the haxe libraries which may affect the js target - so you could have problems with that, e.g. http stuff, i decided to just not use it and abstract my stuff at a higher level to use node.
 
-At this point I don't intend to make hxNode compatible with haxe standard libs - the model is very different, and it's small and to the point.
+I have forked haxe as I intend to add the changes to the standard libs as I come to them. I'll will keep this repo synched with the official haxe repo on google code.
+
 
 ----------------------------------------------
 
