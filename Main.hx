@@ -57,8 +57,8 @@ class Main {
           });
       });
 
-    trace("args[1] "+Node.process.ARGV[2]);
-    s.listen(843,Node.process.ARGV[2]);
+    trace("args[1] "+Node.process.argv[2]);
+    s.listen(843,Node.process.argv[2]);
    
   }
 
@@ -74,7 +74,7 @@ class Main {
     
     request.finish(function (response) {
         sys.puts("STATUS: " + response.statusCode);
-        sys.puts("HEADERS: " + Node.toJSON(response.headers));
+        sys.puts("HEADERS: " + Node.stringify(response.headers));
         response.setBodyEncoding("utf8");
         response.addListener("body", function (chunk) {
             sys.puts("BODY: " + chunk);

@@ -49,6 +49,7 @@ class HttpServer  {
           headers(res,200,s.length);
           res.sendBody(s,Node.ASCII);
           res.finish();
+          return;
         }
       
         s.pre(req);
@@ -123,7 +124,7 @@ class HttpServer  {
     if (prms != null)
       Reflect.setField(e,"PAYLOAD",prms);
 
-    return Node.toJSON(e);
+    return Node.stringify(e);
   }
 
 }

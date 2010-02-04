@@ -29,17 +29,24 @@ typedef StdIO = { > EventEmitter<Dynamic>,
 }
 
 typedef Process = {
-  var ARGV:Array<String>;
+  var argv:Array<String>;
+  var env:Dynamic;
   var pid:Int;
   var platform:String;
+  var __filename:String;
+  var __dirname:String;
+  var module:Dynamic;
   function memoryUsage():{rss:Int,vsize:Int,heapUsed:Int};
   function exit(code:Int):Void;
   function cwd():String;
-  function kill(pid:Int,signal:String):Void;
+  function chdir(d:String):Void;
+  function kill(pid:Int,?signal:String):Void;
   function watchFile(fileName:String,?options:Watch,listener:Dynamic->Dynamic->Void):Void;
   function unwatchFile(fileName:String):Void;
   function compile(source:String,scriptOrigin:String):Void;
   function mixin(?deep:Bool,target:Dynamic,obj:Dynamic,?objN:Dynamic):Void;
+  function nextTick(fn:Void->Void):Void;
+ 
 
   var stdio:StdIO;
 
@@ -213,13 +220,13 @@ class Node {
   public static var setInterval:(Void->Void)->Int->Int = untyped __js__('setInterval');
   public static var clearInterval:Int->Void = untyped __js__('clearInterval');
   
-  public static var GLOBAL:Dynamic = untyped __js__('GLOBAL');
+  public static var global:Dynamic = untyped __js__('global');
   public static var process:Process = untyped __js__('process');
   public static var sys:Sys = require("sys");
   public static var posix:Posix = require("posix");
 
-  public static var toJSON:Dynamic->String = untyped __js__('JSON.stringify');
-  public static var fromJSON:String->Dynamic = untyped __js__('JSON.parse');
+  public static var stringify:Dynamic->String = untyped __js__('JSON.stringify');
+  public static var parse:String->Dynamic = untyped __js__('JSON.parse');
   
   public static function createPromise<T>():Promise<T> {
     return untyped __js__('new process.Promise()');
