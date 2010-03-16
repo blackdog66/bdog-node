@@ -1,13 +1,15 @@
 
-import node.Node;
+package tests;
+
+import bdog.nodejs.Node;
 
 class Main {
 
   public static
   function main() {
-        clientTest();
-    //tcpTest();
-    //    flashCrossDomain();
+           clientTest();
+    //  tcpTest();
+    //flashCrossDomain();
   } 
   
   public static function
@@ -18,14 +20,14 @@ class Main {
     var s = tcp.createServer(function(c:Connection) {
         c.addListener(Node.CONNECT,function(d) {
             trace("got connection");
-            c.send("hello\r\n");
+            c.write("hello\r\n");
           });
 
-        c.addListener(Node.RECEIVE,function(d) {
-            c.send(d);
+        c.addListener(Node.DATA,function(d) {
+            c.write(d);
           });
 
-        c.addListener(Node.EOF,function(d) {
+        c.addListener(Node.END,function(d) {
             trace("lost connection");
             c.close();
           });
@@ -42,7 +44,7 @@ class Main {
     
     var s = tcp.createServer(function(c:Connection) {
         c.addListener(Node.CONNECT,function(d) {
-            c.send('<?xml version="1.0"?>
+            c.write('<?xml version="1.0"?>
 <!DOCTYPE cross-domain-policy
   SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
 <cross-domain-policy>
@@ -51,7 +53,7 @@ class Main {
                c.close();
           });
         
-        c.addListener(Node.EOF,function(d) {
+        c.addListener(Node.END,function(d) {
             trace("lost connection");
             //     c.close();
           });
@@ -69,17 +71,18 @@ class Main {
       sys:Sys = Node.require("sys"),
       http:Http = Node.require("http"),
       google = http.createClient(80, "www.google.cl"),
-      request = google.request("GET","/", {host: "www.google.cl"});
+      request = google.request("GET","/", {host: "www.google.com"});
 
     
-    request.finish(function (response) {
+    request.addListener('response',function (response) {
         sys.puts("STATUS: " + response.statusCode);
         sys.puts("HEADERS: " + Node.stringify(response.headers));
         response.setBodyEncoding("utf8");
-        response.addListener("body", function (chunk) {
+        response.addListener("data", function (chunk) {
             sys.puts("BODY: " + chunk);
           });
       });
+    request.close();
     
   }
 }
