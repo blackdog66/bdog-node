@@ -1,6 +1,6 @@
-package nodejs;
+package bdog.nodejs;
 
-import nodejs.Node;
+import js.Node;
 using Lambda;
 
 typedef MongoObj = Dynamic; 

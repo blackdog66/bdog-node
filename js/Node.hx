@@ -1,4 +1,4 @@
-package bdog.nodejs;
+package js;
 
 typedef StdOut = Dynamic;
 typedef StdErr = Dynamic;
@@ -140,12 +140,12 @@ typedef Posix = {
   function symlinkSync(linkData:Dynamic,path:String):Void;
   function readlinkSync(path:String):String;
   function realpathSync(path:String):String;
-  function chmodSync(path:String,mode:Int):Void;
+  function chmodSync(path:String,?mode:Int):Void;
   function rmdirSync(path:String):Void;
-  function mkdirSync(path:String,mode:Int):Void;
+  function mkdirSync(path:String,?mode:Int):Void;
   function readdirSync(path:String):Array<String>;
   function closeSync(fd:Int):Void;
-  function openSync(path:String,flags:Int,mode:Int):Int;
+  function openSync(path:String,flags:String,?mode:Int):Int;
   function writeSync(fd:Int,data:String,?position:Int,?enc:String):Void;
   function readSync(fd:Int,length:Int,position:Int,?enc:String):String;
   function readFileSync(path:String,?enc:String):String;

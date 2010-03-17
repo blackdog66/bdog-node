@@ -1,13 +1,13 @@
 
 package tests;
 
-import bdog.nodejs.Node;
+import js.Node;
 
 class Main {
 
   public static
   function main() {
-           clientTest();
+    clientTest();
     //  tcpTest();
     //flashCrossDomain();
   } 
@@ -71,7 +71,7 @@ class Main {
       sys:Sys = Node.require("sys"),
       http:Http = Node.require("http"),
       google = http.createClient(80, "www.google.cl"),
-      request = google.request("GET","/", {host: "www.google.com"});
+      request = google.request("GET","/", {host: "www.google.cl"});
 
     
     request.addListener('response',function (response) {

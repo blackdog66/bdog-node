@@ -1,0 +1,7 @@
+
+-D nodejs
+-cp /home/blackdog/Projects/hx/node
+-cp /home/blackdog/Projects/hx/core
+-cp /home/blackdog/Checkouts/utest/src
+-js testsys.js
+-main TestSys

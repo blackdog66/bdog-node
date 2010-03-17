@@ -1,28 +1,61 @@
 
-
 hxNode provides haxe wrappers to Node.js. 
 
-My goal is to provide haxe with a first class server environment using Node.js as the basis.
+My goal is to provide haxe with a first class server environment using
+Node.js as the basis.
 
-You will need my hacks to the haxe standard library, which you will find on github at http://github.com/blackdog66/haxe. All you need to to is copy the std dir from that repo, and then set HAXE_LIBRARY_PATH=/the/tweaked/std/dir, then ...
+haxe has an existing javascript target, however, it is currently
+targeted at client side javascript and so the base files require
+tweaking.  Further to this, I'm implementing the synchronous neko
+APIs so that node.js may be used as an alternative to neko. Therefore,
+to keep installation as straightforward as possible, I'm bundling the
+entire haXe standard library js subdirectory with all the changes for
+the cases noted above.
 
-haxe -D nodejs -js main.js -main Main -cp . Main
+The current js mode features should work just the same, so the bundled
+js directory can replace the existing haXe std library js
+dir. However, you don't even require to do the replacement, haxe
+should find the bundled js dir first anyway. If you have doubts about
+what's being compiled try -v during compile and haxe will show you
+where it's getting it's files from.
+
+Status
+------
+
+Updated js.Node API for node 0.1.32
+        js/Node.hx
+
+Started js synchronous API (using existing neko API where I can)
+        js/FileSystem.hx
+        js/Sys.hx
+        todo io/*, web
+
+Compiling with haxe
+-------------------
+
+You must add  -D nodejs to the compile line. 
+
+From the top directory
+
+haxe -cp . -D nodejs -js main.js -main tests.Main 
 
 to compile main.js
 
-and 
+and then to execute
 
-node main.js to execute.
+node main.js
 
-I haven't altered all of the possible problems in the haxe libraries which may affect the js target - so you could have problems with that, e.g. http stuff, i decided to just not use it and abstract my stuff at a higher level to use node.
+Compiling with haxed (a haxe package build, deploy and install tool)
+--------------------------------------------------------------------
 
-I have forked haxe as I intend to add the changes to the standard libs as I come to them. I'll will keep this repo synched with the official haxe repo on google code.
+haxed build nodejs
 
+Utilities and Examples
+----------------------
 
+In the bdog dir you'll find some utilities and code that uses the haXe
+node API. For example Servlet.hx ....
 
-----------------------------------------------
-
-Added Servlet.hx which demonstrates the use of Node Http, and can be used like this ...
 
  public static function
   makeGetUsersServlet() {
@@ -49,3 +82,4 @@ create your servlets then fire up the server, e.g.
  new HttpServer(accountServer.host,accountServer.port,"Accounts 0.1");
 
 I like to use lots of enums for param and servlet names so i can guarantee i get the spelling right in client haxe too, this may not be to everyone's taste - the nice thing is it's small and easy to change.
+

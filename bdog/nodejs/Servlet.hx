@@ -1,7 +1,7 @@
 
-package nodejs;
+package bdog.nodejs;
 
-import nodejs.Node;
+import js.Node;
 using StringTools;
 
 typedef Validator = {
@@ -29,7 +29,7 @@ class HttpServer  {
 
   public function
   new(host:String,port:Int,name:String) {
-    var http:nodejs.Http = Node.require("http");
+    var http:bdog.nodejs.Http = Node.require("http");
     
     serverID = name;
     trace("Starting "+serverID+" on "+host+":"+port);
