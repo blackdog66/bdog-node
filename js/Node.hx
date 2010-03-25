@@ -7,7 +7,7 @@ typedef Error = {
   var code:Int;
 }
 
-typedef Sys = {
+typedef NodeSys = {
   function puts(s:String):Void;
   function print(s:String):Void;
   function debug(s:String):Void;
@@ -294,7 +294,7 @@ class Node {
   
   public static var global:Dynamic = untyped __js__('global');
   public static var process:Process = untyped __js__('process');
-  public static var sys:Sys = require("sys");
+  public static var sys:NodeSys = require("sys");
   public static var fs:Posix = require("fs");
   public static var multipart:MultiPart = require("multipart");
 
