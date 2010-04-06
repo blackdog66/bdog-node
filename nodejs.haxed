@@ -9,7 +9,10 @@ project:
     author-email:       blackdog66@gmail.com
     tags:               node.js haxe 
     license:            GPL
-
+    
+---
+pack:
+        include:        ./
 ---
 
 build:
@@ -19,3 +22,4 @@ build:
         target:         js
         target-file:    tests/main.js
         options:        -D nodejs  
+

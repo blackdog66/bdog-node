@@ -68,7 +68,7 @@ class Main {
   static function
   clientTest() {
     var
-      sys:Sys = Node.require("sys"),
+      sys:NodeSys = Node.require("sys"),
       http:Http = Node.require("http"),
       google = http.createClient(80, "www.google.cl"),
       request = google.request("GET","/", {host: "www.google.cl"});
@@ -82,6 +82,7 @@ class Main {
             sys.puts("BODY: " + chunk);
           });
       });
+
     request.close();
     
   }

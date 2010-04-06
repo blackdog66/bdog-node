@@ -3,7 +3,7 @@ package js;
 typedef StdOut = Dynamic;
 typedef StdErr = Dynamic;
 
-typedef Error = {
+typedef NodeErr = {
   var code:Int;
 }
 
@@ -13,7 +13,7 @@ typedef NodeSys = {
   function debug(s:String):Void;
   function inspect(o:Dynamic,?showHidden:Bool,?depth:Int):Void;
   function log(s:String):Void;
-  function exec(c:String,fn:Error->StdOut->StdErr->Void):Void;
+  function exec(c:String,fn:NodeErr->StdOut->StdErr->Void):Void;
 }
 
 typedef Watch = {persistant:Bool,interval:Int};
@@ -31,7 +31,7 @@ typedef StdIO = { > EventEmitter<Dynamic>,
   function open(?enc:String):Void;
   function close():Void;
   function write(data:String):Void;
-  function writeError(data:String):Void;
+  function writeNodeErr(data:String):Void;
 }
 
 typedef Process = {
@@ -110,25 +110,25 @@ typedef Stats = {
   
 typedef Posix = {
   // async
-  function unlink(path:String,cb:Error->Void):Void;
-  function rename(from:String,to:String,cb:Error->Void):Void;
-  function stat(path:String,cb:Error->Stats->Void):Void;
-  function lstat(path:String,cb:Error->Stats->Void):Void;
-  function link(srcPath:String,dstPath:String,cb:Error->Void):Void;
-  function symlink(linkData:Dynamic,path:String,cb:Error->Void):Void;
-  function readlink(path:String,cb:Error->String->Void):Void;
-  function realpath(path:String,cb:Error->String->Void):Void;
-  function chmod(path:String,mode:Int,cb:Error->Void):Void;
-  function rmdir(path:String,cb:Error->Void):Void;
-  function mkdir(path:String,mode:Int,cb:Error->Void):Void;
-  function readdir(path:String,cb:Error->Array<String>->Void):Void;
-  function close(fd:Int,cb:Error->Void):Void;
-  function open(path:String,flags:Int,mode:Int,cb:Error->Int->Void):Void;
-  function write(fd:Int,data:String,?position:Int,?enc:String,cb:Error->Int->Void):Void;
-  function read(fd:Int,length:Int,position:Int,?enc:String,cb:Error->String->Int->Void):Void;
+  function unlink(path:String,cb:NodeErr->Void):Void;
+  function rename(from:String,to:String,cb:NodeErr->Void):Void;
+  function stat(path:String,cb:NodeErr->Stats->Void):Void;
+  function lstat(path:String,cb:NodeErr->Stats->Void):Void;
+  function link(srcPath:String,dstPath:String,cb:NodeErr->Void):Void;
+  function symlink(linkData:Dynamic,path:String,cb:NodeErr->Void):Void;
+  function readlink(path:String,cb:NodeErr->String->Void):Void;
+  function realpath(path:String,cb:NodeErr->String->Void):Void;
+  function chmod(path:String,mode:Int,cb:NodeErr->Void):Void;
+  function rmdir(path:String,cb:NodeErr->Void):Void;
+  function mkdir(path:String,mode:Int,cb:NodeErr->Void):Void;
+  function readdir(path:String,cb:NodeErr->Array<String>->Void):Void;
+  function close(fd:Int,cb:NodeErr->Void):Void;
+  function open(path:String,flags:Int,mode:Int,cb:NodeErr->Int->Void):Void;
+  function write(fd:Int,data:String,?position:Int,?enc:String,cb:NodeErr->Int->Void):Void;
+  function read(fd:Int,length:Int,position:Int,?enc:String,cb:NodeErr->String->Int->Void):Void;
 
-  function readFile(path:String,?enc:String,cb:Error->String->Void):Void;
-  function writeFile(fileName:String,contents:String,cb:Error->Void):Void;
+  function readFile(path:String,?enc:String,cb:NodeErr->String->Void):Void;
+  function writeFile(fileName:String,contents:String,cb:NodeErr->Void):Void;
 
   // sync
 
@@ -178,8 +178,8 @@ typedef Request ={
 
 typedef Response={
   function sendHeader(statusCode:Int,headers:Dynamic):Void;
-  function finish():Void;
-  function sendBody(chunk:String,?enc:String):Void;  
+  function close():Void;
+  function write(chunk:String,?enc:String):Void;  
 }
 
 typedef ClientResponse = { > EventEmitter<Null<String>>,
@@ -199,7 +199,7 @@ typedef ClientRequest={ > EventEmitter<Dynamic>,
 }
 
 typedef Client={
-  function request(?method:String,path:String,?headers:Dynamic):ClientRequest;
+  function request(method:String,path:String,?headers:Dynamic):ClientRequest;
   function head(path:String,?headers:Dynamic):ClientRequest;
   function del(path:String,?headers:Dynamic):ClientRequest;
   function put(path:String,?headers:Dynamic):ClientRequest;
@@ -261,7 +261,7 @@ typedef MultiPartStream = { > EventEmitter<Dynamic>,
 
 typedef MultiPart = {
   function parse(message:Dynamic):MultiPartStream;
-  function cat(message:Dynamic,cb:Error->MultiPartStream->Void):Void;
+  function cat(message:Dynamic,cb:NodeErr->MultiPartStream->Void):Void;
 }    
 
 class Node {

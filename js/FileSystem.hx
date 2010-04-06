@@ -35,16 +35,16 @@ class FileSystem {
   }
   
   public static function rename( path : String, newpath : String ) {
-    js.Node.fs.renameSync(path,newpath);
+    Node.fs.renameSync(path,newpath);
   }
   
   public static function stat( path : String ) : FileStat {
-    var s : FileStat = untyped js.Node.fs.statSync(path) ;
+    var s : FileStat = untyped Node.fs.statSync(path) ;
     return s;
   }
 
   public static function fullPath( relpath : String ) : String {
-    return js.Node.fs.realpathSync(relpath);
+    return Node.fs.realpathSync(relpath);
   }
   
   static function getFileKind(stat:js.Node.Stats) {
@@ -57,7 +57,7 @@ class FileSystem {
   }
   
   public static function kind( path : String ) : FileKind {
-    var stat = js.Node.fs.statSync(path);
+    var stat = Node.fs.statSync(path);
     return
       if (stat.isDirectory())
         kdir;

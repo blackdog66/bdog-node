@@ -29,7 +29,7 @@ class HttpServer  {
 
   public function
   new(host:String,port:Int,name:String) {
-    var http:bdog.nodejs.Http = Node.require("http");
+    var http:js.Node.Http = Node.require("http");
     
     serverID = name;
     trace("Starting "+serverID+" on "+host+":"+port);
@@ -47,8 +47,8 @@ class HttpServer  {
         if (s == null) {
           var s = "Servlet " + path + " not found";
           headers(res,200,s.length);
-          res.sendBody(s,Node.ASCII);
-          res.finish();
+          res.write(s,Node.ASCII);
+          res.close();
           return;
         }
       
@@ -68,8 +68,8 @@ class HttpServer  {
               var
               results = s.post(internalRequest,results);
               headers(res,200,results.length,s.contentType);
-              res.sendBody(results,Node.ASCII);
-              res.finish();
+              res.write(results,Node.ASCII);
+              res.close();
             }
                 
             try {
@@ -77,21 +77,21 @@ class HttpServer  {
             } catch(exc:Dynamic) {
               var results = s.post(internalRequest,error(s,EXC(exc)));
               headers(res,200,results.length,s.contentType);
-              res.sendBody(results,Node.ASCII);
-              res.finish();
+              res.write(results,Node.ASCII);
+              res.close();
             }
               
         case REQUIRED(fld):
           var results = error(s,validated);
           headers(res,200,results.length);
-          res.sendBody(results,Node.ASCII);
-          res.finish();
+          res.write(results,Node.ASCII);
+          res.close();
 
         case INVALID(e):
           var results = error(s,Type.enumConstructor(e));
           headers(res,200,results.length);
-          res.sendBody(results,Node.ASCII);
-          res.finish();
+          res.write(results,Node.ASCII);
+          res.close();
 
         case EXC(dummy):
           // shouldn't get here
