@@ -27,26 +27,26 @@ typedef EventEmitter<T> = {
   // TODO function emit(event:String);
 }
 
-typedef StdIO = { > EventEmitter<Dynamic>,
-  function open(?enc:String):Void;
-  function close():Void;
-  function write(data:String):Void;
-  function writeNodeErr(data:String):Void;
+typedef ReadableStream = { > EventEmitter<Dynamic>,
+  function pause():Void;
+  function resume():Void;
+  function destroy():Void;
+  function setEncoding(s:String):Void;  
 }
 
-typedef Process = {
+typedef WritableStream = { > EventEmitter<Dynamic>,
+  function write(s:Dynamic,?enc:String):Void;
+  function end(s:Dynamic,?enc:String):Void;
+  function destroy():Void;
+}
+
+typedef Process = { > EventEmitter<Dynamic>,
   var argv:Array<String>;
   var env:Dynamic;
   var pid:Int;
   var platform:String;
-  var stdio:StdIO;
-  var O_CREAT:Int;
-  var O_APPEND:Int;
-  var O_WRONLY:Int;
-  var O_RDONLY:Int;
-  var O_RDWR:Int;
-  var O_IRWXU:Int;
-  
+  var installPrefix:String;
+
   function memoryUsage():{rss:Int,vsize:Int,heapUsed:Int};
   function nextTick(fn:Void->Void):Void;
   function exit(code:Int):Void;
@@ -58,8 +58,9 @@ typedef Process = {
   function umask(?m:Int):Void;
   function chdir(d:String):Void;
   function kill(pid:Int,?signal:String):Void;
-  function compile(source:String,scriptOrigin:String):Void;  
-  function createChildProcess(command:String,args:Array<String>,?env:Dynamic):ChildProcess;
+  function compile(code:String,scriptOrigin:String):Void;
+  function evalcx(code:String,sandbox:Dynamic,fileName:String):Dynamic;
+  function openStdin():ReadableStream;
 
 }
 
@@ -178,7 +179,7 @@ typedef Request ={
 
 typedef Response={
   function sendHeader(statusCode:Int,headers:Dynamic):Void;
-  function close():Void;
+  function end():Void;
   function write(chunk:String,?enc:String):Void;  
 }
 
@@ -195,7 +196,7 @@ typedef ClientResponse = { > EventEmitter<Null<String>>,
 // chunk Array<Int> or string
 typedef ClientRequest={ > EventEmitter<Dynamic>,
   function sendBody(chunk:String,enc:String):Void;
-  function close():Void;
+  function end():Void;
 }
 
 typedef Client={
