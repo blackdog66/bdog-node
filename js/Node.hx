@@ -235,7 +235,7 @@ typedef Server = {
   function addListener(event:String,fn:Dynamic->Void):Void;
 }
 
-typedef Tcp = {
+typedef Net = {
   function createConnection():Connection;
   function createServer(fn:Connection->Void):Server;
 }
@@ -296,7 +296,6 @@ class Node {
   public static var process:Process = untyped __js__('process');
   public static var sys:NodeSys = require("sys");
   public static var fs:Posix = require("fs");
-  public static var multipart:MultiPart = require("multipart");
 
   public static var __filename = untyped __js__('__filename');
   public static var __dirname = untyped __js__('__dirname');

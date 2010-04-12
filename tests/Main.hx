@@ -15,7 +15,7 @@ class Main {
   public static function
   tcpTest() {
     
-    var tcp:Tcp = Node.require("tcp");
+    var tcp:Net = Node.require("net");
     
     var s = tcp.createServer(function(c:Connection) {
         c.addListener(Node.CONNECT,function(d) {
@@ -40,7 +40,7 @@ class Main {
 
   public static function
   flashCrossDomain() {
-     var tcp:Tcp = Node.require("tcp");
+     var tcp:Net = Node.require("net");
     
     var s = tcp.createServer(function(c:Connection) {
         c.addListener(Node.CONNECT,function(d) {
