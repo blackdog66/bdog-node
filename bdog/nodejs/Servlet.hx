@@ -48,7 +48,7 @@ class HttpServer  {
           var s = "Servlet " + path + " not found";
           headers(res,200,s.length);
           res.write(s,Node.ASCII);
-          res.close();
+          res.end();
           return;
         }
       
@@ -69,7 +69,7 @@ class HttpServer  {
               results = s.post(internalRequest,results);
               headers(res,200,results.length,s.contentType);
               res.write(results,Node.ASCII);
-              res.close();
+              res.end();
             }
                 
             try {
@@ -78,20 +78,20 @@ class HttpServer  {
               var results = s.post(internalRequest,error(s,EXC(exc)));
               headers(res,200,results.length,s.contentType);
               res.write(results,Node.ASCII);
-              res.close();
+              res.end();
             }
               
         case REQUIRED(fld):
           var results = error(s,validated);
           headers(res,200,results.length);
           res.write(results,Node.ASCII);
-          res.close();
+          res.end();
 
         case INVALID(e):
           var results = error(s,Type.enumConstructor(e));
           headers(res,200,results.length);
           res.write(results,Node.ASCII);
-          res.close();
+          res.end();
 
         case EXC(dummy):
           // shouldn't get here
@@ -166,6 +166,7 @@ class Servlet {
         var realVal = v.validator(val);
         if (realVal == null) {
           return INVALID(v.err);
+
         }
         Reflect.setField(newData,n,realVal);
       }

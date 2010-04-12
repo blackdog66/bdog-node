@@ -64,7 +64,7 @@ class HttpClient {
             fn(chunk);
           });
       });
-    request.close();  
+    request.end();  
   }
 }
 
