@@ -19,11 +19,11 @@ typedef WorkerPkt = { > ClientPkt,
 class Worker {
 
   public static var EOL = "\r\n";
-  var stdio:StdIO ;
+  var stdio:Dynamic;
   var log:Int;
   
   public function new() {
-    stdio = Node.process.stdio;
+    stdio = Node.process.openStdin();
     var me = this;
     
   }
@@ -95,12 +95,12 @@ class WorkerClient {
   var child:ChildProcess ;
   var handlers:IntHash<Payload->Void>;
   
-  public function new(js:String) {
+  public function new(myjs:String) {
     var
       me = this;
 
     handlers = new IntHash<Dynamic->Void>();
-    child = Node.process.createChildProcess("node", [js]);
+    child = Node.spawn("node", [myjs]);
    
     child.addListener(Node.OUTPUT, function (data) {
      
@@ -163,7 +163,7 @@ class WorkerClient {
     });
 
    
-    child.write(toSend);
+    child.stdout.write(toSend);
     Node.sys.puts("SENT:"+toSend);
     //    child.write(Worker.EOL,Node.UTF8);
   }

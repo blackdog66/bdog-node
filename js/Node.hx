@@ -36,7 +36,7 @@ typedef ReadableStream = { > EventEmitter<Dynamic>,
 
 typedef WritableStream = { > EventEmitter<Dynamic>,
   function write(s:Dynamic,?enc:String):Void;
-  function end(s:Dynamic,?enc:String):Void;
+  function end(?s:Dynamic,?enc:String):Void;
   function destroy():Void;
 }
 
@@ -61,7 +61,6 @@ typedef Process = { > EventEmitter<Dynamic>,
   function compile(code:String,scriptOrigin:String):Void;
   function evalcx(code:String,sandbox:Dynamic,fileName:String):Dynamic;
   function openStdin():ReadableStream;
-
 }
 
 typedef StreamOptions = {
@@ -80,8 +79,9 @@ typedef FileReadStream = { > EventEmitter<Dynamic>,
   
 typedef FileWriteStream = { > EventEmitter<Dynamic>,
   var writable:Bool;
-  function close(cb:Void->Void):Void;
-  function forceClose(cb:Void->Void):Void;
+  function write(?d:Dynamic,?enc:String):Void;
+  function end():Void;
+  function destroy():Void;
 }
 
 typedef Stats = {
@@ -105,11 +105,9 @@ typedef Stats = {
   function isSymbolicLink():Bool;
   function isFIFO():Bool;
   function isSocket():Bool;
-  function createReadStream(path:String,?options:StreamOptions):FileReadStream;
-  function createWriteStream(path:String,?options:StreamOptions):FileWriteStream;
 }
   
-typedef Posix = {
+typedef NodeFS = {
   // async
   function unlink(path:String,cb:NodeErr->Void):Void;
   function rename(from:String,to:String,cb:NodeErr->Void):Void;
@@ -157,13 +155,17 @@ typedef Posix = {
   function watchFile(fileName:String,?options:Watch,listener:Stats->Stats->Void):Void;
   function unwatchFile(fileName:String):Void;
 
+  function createReadStream(path:String,?options:StreamOptions):FileReadStream;
+  function createWriteStream(path:String,?options:StreamOptions):FileWriteStream;
+  
 }
 
 typedef ChildProcess = { > EventEmitter<Dynamic>,
   var pid:Int;
-  function write(data:String,?enc:String):Void;
-  function close():Void;
-  function kill(?signal:String):Void;
+  var stdin:ReadableStream;
+  var stdout:WritableStream;
+  var stderr:WritableStream;
+  function kill(signal:String):Void;
 }
   
 typedef Request ={
@@ -295,8 +297,21 @@ class Node {
   
   public static var global:Dynamic = untyped __js__('global');
   public static var process:Process = untyped __js__('process');
+  
+  public static function
+  spawn(cmd:String,prms:Array<String>,?env:Dynamic):ChildProcess {
+    var cp = require('child_process');
+    return cp.spawn(cmd,prms,env);
+  }
+
+  public static function
+  exec(cmd:String,fn:NodeErr->StdOut->StdErr->Void) {
+    var cp = require('child_process');
+    return cp.exec(cmd,fn);
+  }
+  
   public static var sys:NodeSys = require("sys");
-  public static var fs:Posix = require("fs");
+  public static var fs:NodeFS = require("fs");
 
   public static var __filename = untyped __js__('__filename');
   public static var __dirname = untyped __js__('__dirname');
