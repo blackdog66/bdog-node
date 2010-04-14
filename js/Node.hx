@@ -163,9 +163,9 @@ typedef NodeFS = {
 
 typedef ChildProcess = { > EventEmitter<Dynamic>,
   var pid:Int;
-  var stdin:ReadableStream;
-  var stdout:WriteableStream;
-  var stderr:WriteableStream;
+  var stdin:WriteableStream;
+  var stdout:ReadableStream;
+  var stderr:ReadableStream;
   function kill(signal:String):Void;
 }
   
