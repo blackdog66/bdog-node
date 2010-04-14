@@ -34,19 +34,20 @@ typedef ReadableStream = { > EventEmitter<Dynamic>,
   function setEncoding(s:String):Void;  
 }
 
-typedef WritableStream = { > EventEmitter<Dynamic>,
+typedef WriteableStream = { > EventEmitter<Dynamic>,
   function write(s:Dynamic,?enc:String):Void;
   function end(?s:Dynamic,?enc:String):Void;
   function destroy():Void;
 }
 
 typedef Process = { > EventEmitter<Dynamic>,
+  var stdout:WriteableStream;
   var argv:Array<String>;
   var env:Dynamic;
   var pid:Int;
   var platform:String;
   var installPrefix:String;
-
+  
   function memoryUsage():{rss:Int,vsize:Int,heapUsed:Int};
   function nextTick(fn:Void->Void):Void;
   function exit(code:Int):Void;
@@ -163,8 +164,8 @@ typedef NodeFS = {
 typedef ChildProcess = { > EventEmitter<Dynamic>,
   var pid:Int;
   var stdin:ReadableStream;
-  var stdout:WritableStream;
-  var stderr:WritableStream;
+  var stdout:WriteableStream;
+  var stderr:WriteableStream;
   function kill(signal:String):Void;
 }
   
@@ -243,30 +244,6 @@ typedef Net = {
   function createServer(fn:Connection->Void):Server;
 }
 
-typedef Part = {
-  var parent:Dynamic;
-  var headers:Dynamic;
-  var filename:String;
-  var name:String;
-  var isMultiPart:Bool;
-  var parts:Array<Part>;
-  var boundary:String;
-  var type:String;
-}
-
-typedef MultiPartStream = { > EventEmitter<Dynamic>,
-  var part:Part;
-  var isMultiPart:Bool;
-  var parts:Array<Part>;
-  function pause():Void;
-  function resume():Void;
-}
-
-typedef MultiPart = {
-  function parse(message:Dynamic):MultiPartStream;
-  function cat(message:Dynamic,cb:NodeErr->MultiPartStream->Void):Void;
-}    
-
 class Node {
   // encodings ...
   public static var UTF8 = "utf8";
@@ -280,7 +257,7 @@ class Node {
   public static var DRAIN = "drain";
   public static var CLOSE = "close";
   // listener events ...
-  public static var OUTPUT = "output";
+  //  public static var OUTPUT = "output";
   public static var ERROR = "error";
   public static var EXIT = "exit";
   public static var NEW_LISTENER = "newListener";
