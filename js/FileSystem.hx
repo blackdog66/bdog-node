@@ -57,6 +57,7 @@ class FileSystem {
   }
   
   public static function kind( path : String ) : FileKind {
+    try {
     var stat = Node.fs.statSync(path);
     return
       if (stat.isDirectory())
@@ -67,6 +68,10 @@ class FileSystem {
         else 
           kother(getFileKind(stat));
       }
+    } catch(exc:Dynamic) {
+      trace("kind:"+exc+", "+path);
+    }
+    return null;
   }
 
   public static function isDirectory( path : String ) : Bool {

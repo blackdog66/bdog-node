@@ -15,21 +15,21 @@ class Main {
   public static function
   tcpTest() {
     
-    var tcp:Net = Node.require("net");
+    var tcp:Net = Node.net;
     
-    var s = tcp.createServer(function(c:Connection) {
-        c.addListener(Node.CONNECT,function(d) {
+    var s = tcp.createServer(function(c:Stream) {
+        c.addListener('connect',function(d) {
             trace("got connection");
             c.write("hello\r\n");
           });
 
-        c.addListener(Node.DATA,function(d) {
+        c.addListener('data',function(d) {
             c.write(d);
           });
 
-        c.addListener(Node.END,function(d) {
+        c.addListener('data',function(d) {
             trace("lost connection");
-            c.close();
+            c.end();
           });
       });
 
@@ -42,20 +42,20 @@ class Main {
   flashCrossDomain() {
      var tcp:Net = Node.require("net");
     
-    var s = tcp.createServer(function(c:Connection) {
-        c.addListener(Node.CONNECT,function(d) {
+    var s = tcp.createServer(function(c:Stream) {
+        c.addListener('connect',function(d) {
             c.write('<?xml version="1.0"?>
 <!DOCTYPE cross-domain-policy
   SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
 <cross-domain-policy>
   <allow-access-from domain="*" to-ports="1138,1139,1140" />
 </cross-domain-policy>');
-               c.close();
+               c.end();
           });
         
-        c.addListener(Node.END,function(d) {
+        c.addListener('end',function(d) {
             trace("lost connection");
-            //     c.close();
+            c.end();
           });
       });
 
@@ -83,7 +83,7 @@ class Main {
           });
       });
 
-    request.close();
+    request.end();
     
   }
 }

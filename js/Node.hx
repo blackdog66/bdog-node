@@ -2,6 +2,8 @@ package js;
 
 typedef StdOut = Dynamic;
 typedef StdErr = Dynamic;
+typedef Watch = {persistant:Bool,interval:Int};
+typedef Listener = Dynamic;
 
 typedef NodeErr = {
   var code:Int;
@@ -13,34 +15,30 @@ typedef NodeSys = {
   function debug(s:String):Void;
   function inspect(o:Dynamic,?showHidden:Bool,?depth:Int):Void;
   function log(s:String):Void;
-  function exec(c:String,fn:NodeErr->StdOut->StdErr->Void):Void;
 }
 
-typedef Watch = {persistant:Bool,interval:Int};
-
-typedef Listener<T> = T->Void;
-
-typedef EventEmitter<T> = {
-  function addListener(event:String,fn:Listener<T>):Dynamic;
-  function removeListener(event:String,listener:Listener<T>):Void;
-  function listeners(event:String):Array<Listener<T>>;
-  // TODO function emit(event:String);
+typedef EventEmitter = {
+  function addListener(event:String,fn:Listener):Dynamic;
+  function removeListener(event:String,listener:Listener):Void;
+  function removeAllListener(event:String):Void;
+  function listeners(event:String):Array<Listener>;
+  function emit(event:String,?arg1:Dynamic,?arg2:Dynamic,?arg3:Dynamic):Void;
 }
 
-typedef ReadableStream = { > EventEmitter<Dynamic>,
+typedef ReadableStream = { > EventEmitter,
   function pause():Void;
   function resume():Void;
   function destroy():Void;
   function setEncoding(s:String):Void;  
 }
 
-typedef WriteableStream = { > EventEmitter<Dynamic>,
+typedef WriteableStream = { > EventEmitter,
   function write(s:Dynamic,?enc:String):Void;
   function end(?s:Dynamic,?enc:String):Void;
   function destroy():Void;
 }
 
-typedef Process = { > EventEmitter<Dynamic>,
+typedef Process = { > EventEmitter,
   var stdout:WriteableStream;
   var argv:Array<String>;
   var env:Dynamic;
@@ -48,7 +46,7 @@ typedef Process = { > EventEmitter<Dynamic>,
   var platform:String;
   var installPrefix:String;
   
-  function memoryUsage():{rss:Int,vsize:Int,heapUsed:Int};
+  function memoryUsage():{rss:Int,vsize:Int,heapUsed:Int,heapTotal:Int};
   function nextTick(fn:Void->Void):Void;
   function exit(code:Int):Void;
   function cwd():String;
@@ -71,14 +69,14 @@ typedef StreamOptions = {
   var bufferSize:Int;
 }
 
-typedef FileReadStream = { > EventEmitter<Dynamic>,
+typedef FileReadStream = { > EventEmitter,
   var readable:Bool;
   function pause():Void;
   function resume():Void;
   function forceClose(cb:Void->Void):Void;
 }
   
-typedef FileWriteStream = { > EventEmitter<Dynamic>,
+typedef FileWriteStream = { > EventEmitter,
   var writable:Bool;
   function write(?d:Dynamic,?enc:String):Void;
   function end():Void;
@@ -110,11 +108,11 @@ typedef Stats = {
   
 typedef NodeFS = {
   // async
-  function unlink(path:String,cb:NodeErr->Void):Void;
   function rename(from:String,to:String,cb:NodeErr->Void):Void;
   function stat(path:String,cb:NodeErr->Stats->Void):Void;
   function lstat(path:String,cb:NodeErr->Stats->Void):Void;
   function link(srcPath:String,dstPath:String,cb:NodeErr->Void):Void;
+  function unlink(path:String,cn:NodeErr->Void):Void;
   function symlink(linkData:Dynamic,path:String,cb:NodeErr->Void):Void;
   function readlink(path:String,cb:NodeErr->String->Void):Void;
   function realpath(path:String,cb:NodeErr->String->Void):Void;
@@ -126,17 +124,18 @@ typedef NodeFS = {
   function open(path:String,flags:Int,mode:Int,cb:NodeErr->Int->Void):Void;
   function write(fd:Int,data:String,?position:Int,?enc:String,cb:NodeErr->Int->Void):Void;
   function read(fd:Int,length:Int,position:Int,?enc:String,cb:NodeErr->String->Int->Void):Void;
-
+  function truncate(fd:Int,len:Int,cb:NodeErr->Void):Void;
+  
   function readFile(path:String,?enc:String,cb:NodeErr->String->Void):Void;
   function writeFile(fileName:String,contents:String,cb:NodeErr->Void):Void;
 
   // sync
 
-  function unlinkSync(path:String):Void;
   function renameSync(from:String,to:String):Void;
   function statSync(path:String):Stats;
   function lstatSync(path:String):Stats;
   function linkSync(srcPath:String,dstPath:String):Void;
+  function unlinkSync(path:String):Void;
   function symlinkSync(linkData:Dynamic,path:String):Void;
   function readlinkSync(path:String):String;
   function realpathSync(path:String):String;
@@ -148,8 +147,10 @@ typedef NodeFS = {
   function openSync(path:String,flags:String,?mode:Int):Int;
   function writeSync(fd:Int,data:String,?position:Int,?enc:String):Void;
   function readSync(fd:Int,length:Int,position:Int,?enc:String):String;
+  function truncateSync(fd:Int,len:Int):NodeErr;
+  
   function readFileSync(path:String,?enc:String):String;
-  function writeFileSync(fileName:String,contents:String):Void;
+  function writeFileSync(fileName:String,contents:String,?enc:String):Void;
 
   // other
 
@@ -161,7 +162,7 @@ typedef NodeFS = {
   
 }
 
-typedef ChildProcess = { > EventEmitter<Dynamic>,
+typedef ChildProcess = { > EventEmitter,
   var pid:Int;
   var stdin:WriteableStream;
   var stdout:ReadableStream;
@@ -174,19 +175,20 @@ typedef Request ={
   var url:String;
   var headers:Dynamic;
   var httpVersion:String;
-  function setBodyEncoding(enc:String):Void;
+  var connection:Stream;
+  function setEncoding(enc:String):Void;
   function pause():Void;
   function resume():Void;
-  var connection:Connection; // docs refer to HttpConnection here!!!
+
 }
 
-typedef Response={
+typedef Response = {
   function sendHeader(statusCode:Int,headers:Dynamic):Void;
   function end():Void;
   function write(chunk:String,?enc:String):Void;  
 }
 
-typedef ClientResponse = { > EventEmitter<Null<String>>,
+typedef ClientResponse = { > EventEmitter,
   var statusCode:Int;
   var httpVersion:String;
   var headers:Dynamic;
@@ -196,13 +198,12 @@ typedef ClientResponse = { > EventEmitter<Null<String>>,
   function pause():Void;  
 }
 
-// chunk Array<Int> or string
-typedef ClientRequest={ > EventEmitter<Dynamic>,
+typedef ClientRequest = { > EventEmitter,
   function sendBody(chunk:String,enc:String):Void;
   function end():Void;
 }
 
-typedef Client={
+typedef Client = {
   function request(method:String,path:String,?headers:Dynamic):ClientRequest;
   function head(path:String,?headers:Dynamic):ClientRequest;
   function del(path:String,?headers:Dynamic):ClientRequest;
@@ -210,26 +211,24 @@ typedef Client={
   function setSecure(fmtType:String,caCerts:String,crlList:String,privKey:String,cert:String):Void;
 }
 
-typedef Http ={
+typedef Http = {
   function createServer(listener:Request->Response->Void,?options:Dynamic):Server;
   function createClient(port:Int,host:String):Client;
 }
   
-typedef Connection = {
-  function connect(port:Int,host:String):Void;
+typedef Stream = { > EventEmitter,
   var remoteAddress:String;
+  function connect(port:Int,?host:String):Void;
   function readyState():String;
   function setEncoding(s:String):Void;
   function write(d:String,?enc:String):Void;
-  function close():Void;
-  function forceClose():Void;
-  function readPause():Void;
-  function readResume():Void;
+  function end():Void;
+  function destroy():Void;
+  function pause():Void;
+  function resume():Void;
   function setTimeout(t:Int):Void;
   function setNoDelay(d:Bool):Void;
   function verifyPeer():Int;
-  function getPeerCertificate(format:String):Void;
-  function addListener(e:String,listener:Dynamic->Void):Void;
 }
 
 typedef Server = {
@@ -239,34 +238,78 @@ typedef Server = {
   function addListener(event:String,fn:Dynamic->Void):Void;
 }
 
-typedef Net = {
-  function createConnection():Connection;
-  function createServer(fn:Connection->Void):Server;
+typedef Net = { > EventEmitter,
+  function createConnection(port:Int,host:String):Void;
+  function createServer(fn:Stream->Void):Server;
 }
 
+typedef ExecOptions = {
+	var encoding:String;
+	var timeout:Int;
+	var maxBuffer:Int;
+	var killSignal:String;
+}
+
+typedef Path = {
+  function join():String;
+  function normalizeArray(a:Array<String>):Array<String>;
+  function normalize(p:String):String;
+  function dirname(p:String):String;
+  function basename(p:String,?ext:String):String;
+  function extname(p:String):String;
+  function exists(p:String,cb:Bool->Void):Void;
+}
+
+typedef UrlObj = {
+  var href:String;
+  var host:String;
+  var protocol:String;
+  var auth:String;
+  var hostname:String;
+  var port:String;
+  var pathname:String;
+  var search:String;
+  var query:String;
+  var hash:String;
+}
+
+typedef Url = {
+  function parse(p:String,?andQueryString:Bool):UrlObj;
+  function format(o:UrlObj):String;
+  function resolve(from:String,to:String):String;
+}
+
+typedef QueryString = {
+  function parse(s:String,?sep:String,?eq:String):String;
+  function escape(s:String):String;
+  function unescape(s:String):String;
+  function stringify(obj:Dynamic,?sep:String,?eq:String):String;
+}
+
+extern class Buffer implements ArrayAccess<Int> {
+  var length(default,null) : Int;
+  function copy(targetBuffer:Dynamic,targetStart:Dynamic,start:Int,end:Int):Void;
+  function slice(start:Int,end:Int):Void;
+  function write(s:String,enc:String,offset:Int):Void;
+  function toString(enc:String,?start:Int,?stop:String):String;
+}
+  
 class Node {
   // encodings ...
+
   public static var UTF8 = "utf8";
   public static var ASCII = "ascii";
   public static var BINARY = "binary";
-  // connection events ...
-  public static var CONNECT = "connect";
-  public static var DATA = "data";
-  public static var END = "end";
-  public static var TIMEOUT = "timeout";
-  public static var DRAIN = "drain";
-  public static var CLOSE = "close";
-  // listener events ...
-  //  public static var OUTPUT = "output";
-  public static var ERROR = "error";
-  public static var EXIT = "exit";
-  public static var NEW_LISTENER = "newListener";
+
   // process events ...
+
   public static var UNCAUGHT_EXC = "uncaughtException";
   public static var SIGINT = "SIGINT";
   public static var SIGUSR1 = "SIGUSR1";
   
   public static var require:String->Dynamic = untyped __js__('require');
+  public static var paths:String = untyped  __js__('require.paths');
+  
   public static var setTimeout:Dynamic->Int->Array<Dynamic>->Int = untyped __js__('setTimeout');
   public static var clearTimeout:Int->Void = untyped __js__('clearTimeout');
   public static var setInterval:Dynamic->Int->Array<Dynamic>->Int = untyped __js__('setInterval');
@@ -274,6 +317,18 @@ class Node {
   
   public static var global:Dynamic = untyped __js__('global');
   public static var process:Process = untyped __js__('process');
+  public static var sys:NodeSys = require("sys");
+  public static var fs:NodeFS = require("fs");
+  public static var net:Net = require("net");
+  
+  public static var __filename = untyped __js__('__filename');
+  public static var __dirname = untyped __js__('__dirname');
+  public static var module:Dynamic = untyped __js__('module');  // ref to the current module
+  public static var stringify:Dynamic->String = untyped __js__('JSON.stringify');
+  public static var parse:String->Dynamic = untyped __js__('JSON.parse');
+  public static var path:Path = require('path');
+  public static var url:Url = require('url');
+  public static var queryString:QueryString = require('querystring');
   
   public static function
   spawn(cmd:String,prms:Array<String>,?env:Dynamic):ChildProcess {
@@ -282,19 +337,21 @@ class Node {
   }
 
   public static function
-  exec(cmd:String,fn:NodeErr->StdOut->StdErr->Void) {
-    var cp = require('child_process');
-    return cp.exec(cmd,fn);
+  exec(cmd:String,options:ExecOptions,fn:NodeErr->StdOut->StdErr->Void) {
+    var cp:Dynamic = require('child_process');
+    trace("cp is "+cp);
+    if (options != null)
+      cp.exec(cmd,options,fn);
+    else
+      cp.exec(cmd,fn);
+    
   }
   
-  public static var sys:NodeSys = require("sys");
-  public static var fs:NodeFS = require("fs");
+  public static function newBuffer(size:Int):Buffer {
+    var b = require('buffer');
+    return untyped __js__('new b.Buffer(size)');
+  }
 
-  public static var __filename = untyped __js__('__filename');
-  public static var __dirname = untyped __js__('__dirname');
-  public static var module = untyped __js__('module');
-  
-  public static var stringify:Dynamic->String = untyped __js__('JSON.stringify');
-  public static var parse:String->Dynamic = untyped __js__('JSON.parse');  
 }
+
 

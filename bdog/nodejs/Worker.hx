@@ -19,18 +19,18 @@ typedef WorkerPkt = { > ClientPkt,
 class Worker {
 
   public static var EOL = "\r\n";
-  var stdio:Dynamic;
+  var stdin:Dynamic;
   var log:Int;
   
   public function new() {
-    stdio = Node.process.openStdin();
+    //    trace("opening stdin");
+    stdin = Node.process.openStdin();
     var me = this;
-    
   }
 
   public function
   writePkt(d) {
-    stdio.write(Node.stringify(d));
+    Node.process.stdout.write(Node.stringify(d));
   }
   
   public function
@@ -39,25 +39,10 @@ class Worker {
   public function start() {
     var
       me = this;
-    
-    stdio.open();
-    stdio.addListener("data", function (data) {
 
-        /*
-        Node.posix.open("log.txt",Node.process.O_APPEND,Node.process.O_RDWR)
-          .addCallback(function(fd) {
-              Node.posix.write(fd,data);
-              Node.posix.close(fd);
-            });
-
-
-        */
-
-    me.stdio.write(data);
-  
-    return;
-        try {    
-          var inPkt = Node.parse(data);
+    stdin.addListener("data", function (data:Dynamic) {  
+        try {
+          var inPkt = Node.parse(Std.string(data));
           try {
             me.run(inPkt,function(payload:Payload) {
                 me.writePkt({
@@ -76,7 +61,7 @@ class Worker {
         } catch(jsonExc:Dynamic) {
           me.writePkt({
             id:-1,
-          	cmd:"error",
+          	cmd:"jsonerror",
           	payload:jsonExc
           });          
         }        
@@ -100,16 +85,16 @@ class WorkerClient {
       me = this;
 
     handlers = new IntHash<Dynamic->Void>();
+    trace("Spawning:"+myjs);
     child = Node.spawn("node", [myjs]);
    
-    child.addListener(Node.OUTPUT, function (data) {
-     
+    child.stdout.addListener(Node.DATA, function (data:Dynamic) {
         if (data == null) {
-          Node.sys.debug("child closed conneciton");
+          //Node.sys.debug("child closed conneciton");
         } else {
           try {
-            var j:WorkerPkt = Node.parse(data);
-            Node.sys.puts(data);
+            var j:WorkerPkt = Node.parse(Std.string(data));
+            trace(j);
             if (j.id > 0) {
               var cb = me.handlers.get(j.id) ;
               if (cb != null){
@@ -117,30 +102,30 @@ class WorkerClient {
                 try {
                   cb(j.payload);
                 } catch(exc:Dynamic) {
-                  Node.sys.debug(exc);
+                  Node.sys.inspect(exc);
                 }
               }
             } else {
-              if (j.cmd == "handshake") 
+              if (j.cmd == "handshake")  {
                 me.start();
-              else {
+              }else {
                 if (j.cmd == "error") {
-                  Node.sys.debug("fucker:"+j);
+                  Node.sys.inspect("fucker:"+j);
                 }
               }
             }
           } catch(exc:Dynamic) {
-            Node.sys.debug(exc);
+            trace(exc);
           }
         }
       });
     
-    child.addListener("error", function (data) {
-          Node.sys.debug("error:"+data);
+    child.stderr.addListener("data", function(data){ 
+        trace("error on child stderr:"+data);
       });
     
     child.addListener("exit", function (code) {
-        Node.sys.debug("exit:"+code);
+        trace("child exiting:"+code);
       });
   }
  
@@ -162,9 +147,9 @@ class WorkerClient {
       payload:s.payload
     });
 
-   
-    child.stdout.write(toSend);
-    Node.sys.puts("SENT:"+toSend);
+    trace("SENT:"+toSend);
+    child.stdin.write(toSend);
+    
     //    child.write(Worker.EOL,Node.UTF8);
   }
 

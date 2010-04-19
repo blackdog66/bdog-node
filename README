@@ -1,29 +1,32 @@
 
 hxNode provides haxe wrappers to Node.js. 
 
-My goal is to provide haxe with a first class server environment using
-Node.js as the basis.
+My goal is to provide haxe with a first class server environment using Node.js as the
+basis.
 
-haxe has an existing javascript target, however, it is currently
-targeted at client side javascript and so the base files require
-tweaking.  Further to this, I'm implementing the synchronous neko
-APIs so that node.js may be used as an alternative to neko. Therefore,
-to keep installation as straightforward as possible, I'm bundling the
-entire haXe standard library js subdirectory with all the changes for
-the cases noted above.
+haxe has an existing javascript target, however, it is currently targeted at client side
+javascript and so the base files require tweaking. Also, the current haxe filesystem API
+is synchronous so I'm using the node.js synchronous functions to implement js.FileSystem and 
+hopefully the other standard haxe APIs.
 
-The current js mode features should work just the same, so the bundled
-js directory can replace the existing haXe std library js
-dir. However, you don't even require to do the replacement, haxe
-should find the bundled js dir first anyway. If you have doubts about
-what's being compiled try -v during compile and haxe will show you
-where it's getting it's files from.
+Therefore, to keep installation as straightforward as possible, I'm bundling the entire
+haxe js subdirectory with all the changes for the cases noted above. The base node API is
+in js/Node.hs.
+
+The current js mode features should work just the same, so the bundled js directory can
+replace the existing haXe std library js dir. However, you don't even require to do the
+replacement, haxe should find the bundled js dir first anyway. If you have doubts about
+what's being compiled try -v during compile and haxe will show you where it's getting it's
+files from.
 
 Status
 ------
 
-Updated js.Node API for node 0.1.32
-        js/Node.hx
+The base Node API is in js/Node.hx. 
+
+API is now at 0.1.91  
+
+Note, I haven't wrapped DNS, Assert or REPL.
 
 Started js synchronous API (using existing neko API where I can)
         js/FileSystem.hx
@@ -81,5 +84,5 @@ create your servlets then fire up the server, e.g.
 
  new HttpServer(accountServer.host,accountServer.port,"Accounts 0.1");
 
-I like to use lots of enums for param and servlet names so i can guarantee i get the spelling right in client haxe too, this may not be to everyone's taste - the nice thing is it's small and easy to change.
+I like to use enums for param and servlet names so i can guarantee i get the spelling right in client haxe too, this may not be to everyone's taste - the nice thing is it's small and easy to change.
 

@@ -53,7 +53,7 @@ class Lib {
 
   public static function println(v:Dynamic) {
     #if nodejs
-    untyped js.Node.sys.println(js.Boot.__string_rec(v,""));
+    untyped js.Node.sys.puts(js.Boot.__string_rec(v,""));
     #end
   }
 

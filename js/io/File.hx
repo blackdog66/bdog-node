@@ -27,6 +27,26 @@ package js.io;
 
 import js.Node;
 
+
+class FileInput extends haxe.io.Input {
+  public function new(fh:FileHandle) {
+
+  }
+  
+  public function eof():Bool { return false;}
+  public function seek(pos:Int,f:FileSeek):Void {}
+  public function tell():Int { return 1; }  
+}
+
+class FileOutput extends haxe.io.Output {
+  public function new(fh:FileHandle) {
+
+  }
+  
+  public function seek(pos:Int,f:FileSeek):Void {}
+  public function tell():Int { return 1; }  
+}
+
 enum FileHandle {
 }
 
@@ -51,25 +71,26 @@ class File {
   }
   
   public static function read( path : String, binary : Bool ) {
-    return new FileInput(Node.fs.openSync(path,"r+"));
+    var fd = Node.fs.openSync(path,"r+");
+    return new FileInput(untyped fd);
   }
   
   public static function write( path : String, binary : Bool ) {
-    return new FileOutput(Node.fs.openSync(path,"w+"));
+    var fd = Node.fs.openSync(path,"w+");
+    return new FileOutput(untyped fd);
   }
   
   public static function append( path : String, binary : Bool ) {
-    return new FileOutput(Node.fs.openSync(path,"a+"));
+    var fd = Node.fs.openSync(path,"a+");
+    return new FileOutput(untyped fd);
   }
   
   public static function copy( src : String, dst : String ) {
-    var s = read(src,true);
-    var d = write(dst,true);
-    d.writeInput(s);
-    s.close();
-    d.close();
+    Node.fs.writeFileSync(dst,getContent(src));
   }
+
   
+  /*
   public static function stdin() {
     return new FileInput();
   }
@@ -86,5 +107,5 @@ class File {
     //return getch(echo);
     return -1;
   }
-  
+  */
 }

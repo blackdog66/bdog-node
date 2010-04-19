@@ -46,9 +46,9 @@ class HttpClient {
     port = p;
   }
 
-  public function get(path:String,prms:Dynamic) {
+  public function get(path:String,?prms:Dynamic) {
     method = "GET";
-    url = path+objToString(prms);
+    url = path + ((prms != null) ? objToString(prms) : "");
     return this;
   }
 
@@ -56,10 +56,10 @@ class HttpClient {
     var
       http = Node.require("http"),      
       client = http.createClient(port,host),
-      request = client.request(method,url);
+      request = client.request(method,url,{host:host});
 
     request.addListener('response',function(response) {
-        response.setBodyEncoding("utf8");
+        response.setBodyEncoding("ascii");
         response.addListener("data", function (chunk) {
             fn(chunk);
           });

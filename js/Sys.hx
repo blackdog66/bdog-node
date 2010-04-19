@@ -1,8 +1,6 @@
 package js;
 
-#if nodejs
 import js.Node;
-#end
 
 class Sys {
   public static function
@@ -44,7 +42,7 @@ class Sys {
 
   public static function
   systemName() : String {
-    return Node.process.platform;
+    return "nodejs";
   }
 
   public static function
@@ -62,6 +60,7 @@ class Sys {
     return '"'+arg.split('"').join('\\"')+'"';
 	}
 
+
   public static function
   commandAsync( cmd : String, ?args : Array<String>,ret:Int->String->Void):Void {
     if( args != null ) {
@@ -70,7 +69,7 @@ class Sys {
         cmd += " "+escapeArgument(a);
     }
     
-    Node.sys.exec(cmd,function(err,stdout,stderr) {
+    Node.exec(cmd,null,function(err,stdout,stderr) {
         var result:Int = 0,
           output:String=stdout;
         
