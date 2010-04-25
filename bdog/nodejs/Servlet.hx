@@ -53,11 +53,11 @@ class HttpServer  {
         }
       
         s.pre(req);
-            
+
         var
           params = reqPrms.query,
           validated = s.checkRequired(params);
-            
+        
         switch(validated) {
 
         case OK(newParams):
@@ -88,13 +88,14 @@ class HttpServer  {
           res.end();
 
         case INVALID(e):
-          var results = error(s,Type.enumConstructor(e));
+          var results = error(s,validated);
           headers(res,200,results.length);
           res.write(results,Node.ASCII);
           res.end();
 
         case EXC(dummy):
           // shouldn't get here
+          trace("BUGGER "+dummy);
         }
 
       }).listen(port,host);

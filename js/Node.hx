@@ -60,6 +60,7 @@ typedef Process = { > EventEmitter,
   function compile(code:String,scriptOrigin:String):Void;
   function evalcx(code:String,sandbox:Dynamic,fileName:String):Dynamic;
   function openStdin():ReadableStream;
+  function binding(s:String):Dynamic;
 }
 
 typedef StreamOptions = {
@@ -227,6 +228,7 @@ typedef Stream = { > EventEmitter,
   function pause():Void;
   function resume():Void;
   function setTimeout(t:Int):Void;
+  function setKeepAlive(?enable:Bool,delay:Int):Void;
   function setNoDelay(d:Bool):Void;
   function verifyPeer():Int;
 }
@@ -239,7 +241,7 @@ typedef Server = {
 }
 
 typedef Net = { > EventEmitter,
-  function createConnection(port:Int,host:String):Void;
+  function createConnection(port:Int,host:String):Stream;
   function createServer(fn:Stream->Void):Server;
 }
 
@@ -293,7 +295,12 @@ extern class Buffer implements ArrayAccess<Int> {
   function write(s:String,enc:String,offset:Int):Void;
   function toString(enc:String,?start:Int,?stop:String):String;
 }
-  
+
+typedef Script =  {  
+  function runInThisContext():Dynamic;
+  function runInNewContext(sandbox:Dynamic):Void;
+}
+
 class Node {
   // encodings ...
 
@@ -343,13 +350,19 @@ class Node {
     if (options != null)
       cp.exec(cmd,options,fn);
     else
-      cp.exec(cmd,fn);
-    
+      cp.exec(cmd,fn);    
   }
   
-  public static function newBuffer(size:Int):Buffer {
+  public static function
+  newBuffer(size:Int):Buffer {
     var b = require('buffer');
     return untyped __js__('new b.Buffer(size)');
+  }
+
+  public static function
+  newScript(code:String,?fileName:Dynamic):Script {
+    var b = process.binding('evals');
+    return untyped __js__('new b.Script(code,fileName)');
   }
 
 }

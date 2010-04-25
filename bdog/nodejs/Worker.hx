@@ -88,7 +88,7 @@ class WorkerClient {
     trace("Spawning:"+myjs);
     child = Node.spawn("node", [myjs]);
    
-    child.stdout.addListener(Node.DATA, function (data:Dynamic) {
+    child.stdout.addListener('data', function (data:Dynamic) {
         if (data == null) {
           //Node.sys.debug("child closed conneciton");
         } else {

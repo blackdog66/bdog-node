@@ -24,14 +24,13 @@ Status
 
 The base Node API is in js/Node.hx. 
 
-API is now at 0.1.91  
+API is now at 0.1.92
 
 Note, I haven't wrapped DNS, Assert or REPL.
+Partially added Script, didn't do static methods.
 
-Started js synchronous API (using existing neko API where I can)
-        js/FileSystem.hx
-        js/Sys.hx
-        todo io/*, web
+Started js synchronous API for the standard haXe libs, note this part still has a lot of
+        work to do.  js/FileSystem.hx js/Sys.hx todo io/*, web
 
 Compiling with haxe
 -------------------
