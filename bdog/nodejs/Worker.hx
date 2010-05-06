@@ -80,21 +80,27 @@ class WorkerClient {
   var child:ChildProcess ;
   var handlers:IntHash<Payload->Void>;
   
-  public function new(myjs:String) {
-    var
-      me = this;
-
+  public function new() {
     handlers = new IntHash<Dynamic->Void>();
-    trace("Spawning:"+myjs);
-    child = Node.spawn("node", [myjs]);
-   
+  }
+
+  public function linkChild(onHandshake:Void->Void) {
+    var
+      me = this,
+      cardCode = "sys/CardWorker.js";
+
+    trace("Spawning:");
+    child = Node.spawn("node", [cardCode]);
+    
     child.stdout.addListener('data', function (data:Dynamic) {
         if (data == null) {
           //Node.sys.debug("child closed conneciton");
         } else {
           try {
-            var j:WorkerPkt = Node.parse(Std.string(data));
-            trace(j);
+            trace(Std.string(data));
+            var dd:Dynamic = Node.parse(Std.string(data));
+            if (Reflect.field(dd,"id") != null) {
+              var j:WorkerPkt = dd;
             if (j.id > 0) {
               var cb = me.handlers.get(j.id) ;
               if (cb != null){
@@ -102,20 +108,23 @@ class WorkerClient {
                 try {
                   cb(j.payload);
                 } catch(exc:Dynamic) {
-                  Node.sys.inspect(exc);
+                  trace(Node.sys.inspect(exc));
                 }
               }
             } else {
               if (j.cmd == "handshake")  {
-                me.start();
-              }else {
+                trace("ok in handshake about to start");
+                onHandshake();
+              } else {
                 if (j.cmd == "error") {
-                  Node.sys.inspect("fucker:"+j);
+                  trace("error:"+Std.string(j));
                 }
               }
             }
+            }
           } catch(exc:Dynamic) {
-            trace(exc);
+            trace("Worker Client:"+exc);
+            trace("DATA is "+Std.string(data));
           }
         }
       });
@@ -129,9 +138,6 @@ class WorkerClient {
       });
   }
  
-
-  function start() { }
-  
   function
   setCallback(fn:Dynamic->Void) {
     var id = 1 + Std.random(1000000);

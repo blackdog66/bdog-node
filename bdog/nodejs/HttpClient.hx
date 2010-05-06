@@ -57,7 +57,7 @@ class HttpClient {
       http = Node.require("http"),      
       client = http.createClient(port,host),
       request = client.request(method,url,{host:host});
-
+    trace("getting :"+url);
     request.addListener('response',function(response) {
         response.setBodyEncoding("ascii");
         response.addListener("data", function (chunk) {

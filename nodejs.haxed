@@ -22,4 +22,23 @@ build:
         target:         js
         target-file:    tests/main.js
         options:        -D nodejs  
+---
 
+build:
+        name:           chatserver
+        class-path:     ./
+        main-class:     tests.Chat
+        target:         js
+        target-file:    tests/chatserver.js
+        options:        -D nodejs
+
+---
+
+build:
+        name:           chatclient
+        class-path:     ./
+                        ../core
+        main-class:     tests.ChatController
+        target:         js
+        target-file:    tests/chatclient.js
+        options:        -D nodejs

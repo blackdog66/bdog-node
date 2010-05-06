@@ -180,11 +180,10 @@ typedef Request ={
   function setEncoding(enc:String):Void;
   function pause():Void;
   function resume():Void;
-
 }
 
 typedef Response = {
-  function sendHeader(statusCode:Int,headers:Dynamic):Void;
+  function writeHead(statusCode:Int,?reasonPhrase:String,headers:Dynamic):Void;
   function end():Void;
   function write(chunk:String,?enc:String):Void;  
 }
@@ -271,7 +270,7 @@ typedef UrlObj = {
   var port:String;
   var pathname:String;
   var search:String;
-  var query:String;
+  var query:Dynamic;
   var hash:String;
 }
 
@@ -282,7 +281,7 @@ typedef Url = {
 }
 
 typedef QueryString = {
-  function parse(s:String,?sep:String,?eq:String):String;
+  function parse(s:String,?sep:String,?eq:String):Dynamic;
   function escape(s:String):String;
   function unescape(s:String):String;
   function stringify(obj:Dynamic,?sep:String,?eq:String):String;
@@ -327,6 +326,7 @@ class Node {
   public static var sys:NodeSys = require("sys");
   public static var fs:NodeFS = require("fs");
   public static var net:Net = require("net");
+  public static var http:Http = require("http");
   
   public static var __filename = untyped __js__('__filename');
   public static var __dirname = untyped __js__('__dirname');

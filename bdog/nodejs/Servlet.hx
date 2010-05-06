@@ -29,14 +29,14 @@ class HttpServer  {
 
   public function
   new(host:String,port:Int,name:String) {
-    var http:js.Node.Http = Node.require("http");
+    var http = Node.http;
     
     serverID = name;
     trace("Starting "+serverID+" on "+host+":"+port);
     
     var
       me = this,
-      URL = Node.require("url");
+      URL = Node.url;
         
     http.createServer(function(req:Request,res:Response) {
         var
@@ -107,7 +107,7 @@ class HttpServer  {
     Reflect.setField(hdrs,"Content-Length",length);
     Reflect.setField(hdrs,"Content-Type",ct);
     Reflect.setField(hdrs,"Connection","close");
-    res.sendHeader(200, hdrs);
+    res.writeHead(200, hdrs);
   }
 
   public static function
@@ -142,8 +142,8 @@ class Servlet {
   var requiredKeys:Array<String> ;
 
   public function
-  new(e:Dynamic,a:Action) {
-    var url = "/"+Type.enumConstructor(e);
+  new(e:Dynamic,a:Action,?prefix = '/') {
+    var url = prefix+Type.enumConstructor(e);
     if (servlets.exists(url)) throw "Duplicate server URL";
     servlets.set(url,this);
     action = a;
