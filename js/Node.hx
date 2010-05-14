@@ -193,7 +193,7 @@ typedef ClientResponse = { > EventEmitter,
   var httpVersion:String;
   var headers:Dynamic;
   var client:Client;
-  function setBodyEncoding(enc:String):Void;
+  function setEncoding(enc:String):Void;
   function resume():Void;
   function pause():Void;  
 }

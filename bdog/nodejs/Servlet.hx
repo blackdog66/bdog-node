@@ -47,7 +47,7 @@ class HttpServer  {
         if (s == null) {
           var s = "Servlet " + path + " not found";
           headers(res,200,s.length);
-          res.write(s,Node.ASCII);
+          res.write(s);
           res.end();
           return;
         }
@@ -68,7 +68,7 @@ class HttpServer  {
               var
               results = s.post(internalRequest,results);
               headers(res,200,results.length,s.contentType);
-              res.write(results,Node.ASCII);
+              res.write(results);
               res.end();
             }
                 
@@ -77,20 +77,20 @@ class HttpServer  {
             } catch(exc:Dynamic) {
               var results = s.post(internalRequest,error(s,EXC(exc)));
               headers(res,200,results.length,s.contentType);
-              res.write(results,Node.ASCII);
+              res.write(results);
               res.end();
             }
               
         case REQUIRED(fld):
           var results = error(s,validated);
           headers(res,200,results.length);
-          res.write(results,Node.ASCII);
+          res.write(results);
           res.end();
 
         case INVALID(e):
           var results = error(s,validated);
           headers(res,200,results.length);
-          res.write(results,Node.ASCII);
+          res.write(results);
           res.end();
 
         case EXC(dummy):
@@ -102,11 +102,11 @@ class HttpServer  {
   }
 
   static function
-  headers(res:Response,code:Int,length:Int,ct="text/html") {
+  headers(res:Response,code:Int,length:Int,ct="text/json") {
     var hdrs = {};
     Reflect.setField(hdrs,"Content-Length",length);
     Reflect.setField(hdrs,"Content-Type",ct);
-    Reflect.setField(hdrs,"Connection","close");
+    //   Reflect.setField(hdrs,"Connection","close");
     res.writeHead(200, hdrs);
   }
 

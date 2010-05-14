@@ -31,7 +31,7 @@ class Channel {
   public var sessions:Hash<Session>;
   public var nicks:Hash<String>;
   var messages:Array<Msg>;
-  var callbacks:Array<{timestamp:Float,fn:Array<Msg>->Void}>;
+  var callbacks:Array<{sessID:String,timestamp:Float,fn:Array<Msg>->Void}>;
   
   var messageBacklog:Int; 
   var sessionTimeout:Int;
@@ -55,7 +55,7 @@ class Channel {
     var nick = n.toLowerCase();
     if (nick.length > 50) return null;
     if (~/[^\w_\-^!]/.match(nick)) return null;
-    if (nicks.exists(nick)) return null;
+    //    if (nicks.exists(nick)) return null;
 
     nicks.set(nick,nick);
     var sess = new Session(nick);
@@ -83,7 +83,7 @@ class Channel {
   }
 
   public function
-  query(since:Float,fn:Array<Msg>->Void) {
+  query(sessID:String,since:Float,fn:Array<Msg>->Void) {
     var
       matching:Array<Msg> = null ,
       length = messages.length;
@@ -99,6 +99,7 @@ class Channel {
       fn(matching);
     } else {
       callbacks.push({
+        sessID:sessID,
         timestamp:Date.now().getTime(),
         fn:fn
       });
@@ -108,6 +109,14 @@ class Channel {
   function flushCallbacks() {
     var now = Date.now().getTime();
     while (callbacks.length > 0 && now - callbacks[0].timestamp > sessionTimeout * 0.75) {
+      callbacks.shift().fn([]);
+    }
+  }
+
+  function flushCallbacksBySess(sessID) {
+    var now = Date.now().getTime();
+    while (callbacks.length > 0 && callbacks[0].sessID == sessID) {
+      trace("removing callback be session "+sessID);
       callbacks.shift().fn([]);
     }
   }
@@ -125,9 +134,11 @@ class Channel {
   public function
   destroySession(id) {
     if (sessions.exists(id)) {
+      trace("parting:"+id);
       var n = sessions.get(id).nick;
       sessions.remove(id);
       nicks.remove(n);
+      flushCallbacksBySess(id);
     }
   }
 }
@@ -245,13 +256,14 @@ class ChatServer {
 
     var since = Std.parseInt(qsince);
     session = channel.sessions.get(id);
-    if (session != null)
+    if (session != null) 
       session.poke();
     
-    channel.query(since,function(messages) {
+    channel.query(id,since,function(messages) {
         if (session != null) session.poke();
         me.write(res,200,{messages:messages});
       });
+    
   }
 
   public function
@@ -259,10 +271,12 @@ class ChatServer {
     var
       query = Node.url.parse(req.url).query,
       qs = Node.queryString.parse(query),
-      id = qs.id;
+      id = qs.id,
+      session = channel.sessions.get(id);
 
-    trace("parting");
+    channel.appendMessage(session.nick,"part");
     channel.destroySession(id);
+   
     write(res,200,{});
   }
   
