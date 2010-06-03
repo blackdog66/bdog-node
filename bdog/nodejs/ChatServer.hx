@@ -274,9 +274,11 @@ class ChatServer {
       id = qs.id,
       session = channel.sessions.get(id);
 
-    channel.appendMessage(session.nick,"part");
-    channel.destroySession(id);
-   
+    // server could have been restarted leaving clients still trying to connect
+    if (session != null) {
+      channel.appendMessage(session.nick,"part");
+      channel.destroySession(id);
+    }
     write(res,200,{});
   }
   

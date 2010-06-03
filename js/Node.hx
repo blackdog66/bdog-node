@@ -313,29 +313,29 @@ class Node {
   public static var SIGINT = "SIGINT";
   public static var SIGUSR1 = "SIGUSR1";
   
-  public static var require:String->Dynamic = untyped __js__('require');
-  public static var paths:String = untyped  __js__('require.paths');
+  public static var require:String->Dynamic;
+  public static var paths:String;
   
-  public static var setTimeout:Dynamic->Int->Array<Dynamic>->Int = untyped __js__('setTimeout');
-  public static var clearTimeout:Int->Void = untyped __js__('clearTimeout');
-  public static var setInterval:Dynamic->Int->Array<Dynamic>->Int = untyped __js__('setInterval');
-  public static var clearInterval:Int->Void = untyped __js__('clearInterval');
+  public static var setTimeout:Dynamic->Int->Array<Dynamic>->Int;
+  public static var clearTimeout:Int->Void;
+  public static var setInterval:Dynamic->Int->Array<Dynamic>->Int;
+  public static var clearInterval:Int->Void;
   
-  public static var global:Dynamic = untyped __js__('global');
-  public static var process:Process = untyped __js__('process');
-  public static var sys:NodeSys = require("sys");
-  public static var fs:NodeFS = require("fs");
-  public static var net:Net = require("net");
-  public static var http:Http = require("http");
+  public static var global:Dynamic;
+  public static var process:Process;
+  public static var sys:NodeSys;
+  public static var fs:NodeFS;
+  public static var net:Net;
+  public static var http:Http;
   
-  public static var __filename = untyped __js__('__filename');
-  public static var __dirname = untyped __js__('__dirname');
-  public static var module:Dynamic = untyped __js__('module');  // ref to the current module
-  public static var stringify:Dynamic->String = untyped __js__('JSON.stringify');
-  public static var parse:String->Dynamic = untyped __js__('JSON.parse');
-  public static var path:Path = require('path');
-  public static var url:Url = require('url');
-  public static var queryString:QueryString = require('querystring');
+  public static var __filename:String;
+  public static var __dirname:String;
+  public static var module:Dynamic;
+  public static var stringify:Dynamic->String;
+  public static var parse:String->Dynamic;
+  public static var path:Path;
+  public static var url:Url;
+  public static var queryString:QueryString;
   
   public static function
   spawn(cmd:String,prms:Array<String>,?env:Dynamic):ChildProcess {
@@ -365,6 +365,30 @@ class Node {
     return untyped __js__('new b.Script(code,fileName)');
   }
 
+  public static function
+  __init__() {
+    require = untyped __js__('require');
+    paths = untyped  __js__('require.paths');
+    setTimeout = untyped __js__('setTimeout');
+    clearTimeout = untyped __js__('clearTimeout');
+    setInterval = untyped __js__('setInterval');
+    clearInterval = untyped __js__('clearInterval');
+    global = untyped __js__('global');
+    process = untyped __js__('process');
+    sys = require("sys");
+    fs = require("fs");
+    net = require("net");
+    http = require("http");
+    __filename = untyped __js__('__filename');
+    __dirname = untyped __js__('__dirname');
+    module = untyped __js__('module');  // ref to the current module
+    stringify = untyped __js__('JSON.stringify');
+    parse = untyped __js__('JSON.parse');
+    path = require('path');
+    url = require('url');
+    queryString = require('querystring');
+  }
+  
 }
 
 

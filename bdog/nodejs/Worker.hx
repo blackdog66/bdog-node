@@ -89,7 +89,6 @@ class WorkerClient {
       me = this,
       cardCode = "sys/CardWorker.js";
 
-    trace("Spawning:");
     child = Node.spawn("node", [cardCode]);
     
     child.stdout.addListener('data', function (data:Dynamic) {
@@ -97,18 +96,20 @@ class WorkerClient {
           //Node.sys.debug("child closed conneciton");
         } else {
           try {
-            trace(Std.string(data));
+          
             var dd:Dynamic = Node.parse(Std.string(data));
             if (Reflect.field(dd,"id") != null) {
               var j:WorkerPkt = dd;
             if (j.id > 0) {
               var cb = me.handlers.get(j.id) ;
               if (cb != null){
-                me.handlers.remove(j.id);              
+                me.handlers.remove(j.id);
                 try {
+                  trace("doing payload");
+                  trace(Std.string(j.payload));
                   cb(j.payload);
                 } catch(exc:Dynamic) {
-                  trace(Node.sys.inspect(exc));
+                  trace("AHA! "+Node.sys.inspect(exc));
                 }
               }
             } else {

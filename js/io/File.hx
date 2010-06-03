@@ -63,7 +63,7 @@ enum FileSeek {
 class File {
 
   public static function getContent( path : String ) {
-    return Node.fs.readFileSync(path);
+    return Node.fs.readFileSync(path,'ascii');
   }
   
   public static function getBytes( path : String ) {
