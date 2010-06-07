@@ -70,14 +70,14 @@ typedef StreamOptions = {
   var bufferSize:Int;
 }
 
-typedef FileReadStream = { > EventEmitter,
+typedef ReadStream = { > EventEmitter,
   var readable:Bool;
   function pause():Void;
   function resume():Void;
-  function forceClose(cb:Void->Void):Void;
+  function destroy():Void;
 }
   
-typedef FileWriteStream = { > EventEmitter,
+typedef WriteStream = { > EventEmitter,
   var writable:Bool;
   function write(?d:Dynamic,?enc:String):Void;
   function end():Void;
@@ -126,10 +126,10 @@ typedef NodeFS = {
   function write(fd:Int,data:String,?position:Int,?enc:String,cb:NodeErr->Int->Void):Void;
   function read(fd:Int,length:Int,position:Int,?enc:String,cb:NodeErr->String->Int->Void):Void;
   function truncate(fd:Int,len:Int,cb:NodeErr->Void):Void;
-  
   function readFile(path:String,?enc:String,cb:NodeErr->String->Void):Void;
   function writeFile(fileName:String,contents:String,cb:NodeErr->Void):Void;
-
+  function chown(path:String,uid:Int,gid:Int,cb:NodeErr->Void):Void ;
+  
   // sync
 
   function renameSync(from:String,to:String):Void;
@@ -152,14 +152,16 @@ typedef NodeFS = {
   
   function readFileSync(path:String,?enc:String):String;
   function writeFileSync(fileName:String,contents:String,?enc:String):Void;
-
+  function chownSync(path:String,uid:Int,gid:Int):Void;
+  
   // other
 
   function watchFile(fileName:String,?options:Watch,listener:Stats->Stats->Void):Void;
   function unwatchFile(fileName:String):Void;
 
-  function createReadStream(path:String,?options:StreamOptions):FileReadStream;
-  function createWriteStream(path:String,?options:StreamOptions):FileWriteStream;
+  function createReadStream(path:String,?options:StreamOptions):ReadStream;
+  function createWriteStream(path:String,?options:StreamOptions):WriteStream;
+
   
 }
 
