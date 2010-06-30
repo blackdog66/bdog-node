@@ -1,9 +1,10 @@
 
-package tests;
+// Compile with
+// haxe -D nodejs -cp . -js ex2.js -main Ex2
 
 import js.Node;
 
-class Main {
+class Ex2 {
 
   public static
   function main() {

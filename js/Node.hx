@@ -9,6 +9,25 @@ typedef NodeErr = {
   var code:Int;
 }
 
+typedef CredDetails = {
+  var key:String;
+  var cert:String;
+  var ca:Array<String>;
+}
+
+typedef PeerCert = {
+  var subject:String;
+  var issuer:String;
+  var valid_from:String;
+  var valid_to:String;
+}
+
+typedef Credentials = Dynamic;
+
+typedef Crypto = {
+  function createCredentials(details:CredDetails):Credentials;
+}
+
 typedef NodeSys = {
   function puts(s:String):Void;
   function print(s:String):Void;
@@ -25,21 +44,8 @@ typedef EventEmitter = {
   function emit(event:String,?arg1:Dynamic,?arg2:Dynamic,?arg3:Dynamic):Void;
 }
 
-typedef ReadableStream = { > EventEmitter,
-  function pause():Void;
-  function resume():Void;
-  function destroy():Void;
-  function setEncoding(s:String):Void;  
-}
-
-typedef WriteableStream = { > EventEmitter,
-  function write(s:Dynamic,?enc:String):Void;
-  function end(?s:Dynamic,?enc:String):Void;
-  function destroy():Void;
-}
-
 typedef Process = { > EventEmitter,
-  var stdout:WriteableStream;
+  var stdout:WriteStream;
   var argv:Array<String>;
   var env:Dynamic;
   var pid:Int;
@@ -59,7 +65,7 @@ typedef Process = { > EventEmitter,
   function kill(pid:Int,?signal:String):Void;
   function compile(code:String,scriptOrigin:String):Void;
   function evalcx(code:String,sandbox:Dynamic,fileName:String):Dynamic;
-  function openStdin():ReadableStream;
+  function openStdin():ReadStream;
   function binding(s:String):Dynamic;
 }
 
@@ -160,16 +166,14 @@ typedef NodeFS = {
   function unwatchFile(fileName:String):Void;
 
   function createReadStream(path:String,?options:StreamOptions):ReadStream;
-  function createWriteStream(path:String,?options:StreamOptions):WriteStream;
-
-  
+  function createWriteStream(path:String,?options:StreamOptions):WriteStream;  
 }
 
 typedef ChildProcess = { > EventEmitter,
   var pid:Int;
-  var stdin:WriteableStream;
-  var stdout:ReadableStream;
-  var stderr:ReadableStream;
+  var stdin:WriteStream;
+  var stdout:ReadStream;
+  var stderr:ReadStream;
   function kill(signal:String):Void;
 }
   
@@ -207,10 +211,8 @@ typedef ClientRequest = { > EventEmitter,
 
 typedef Client = {
   function request(method:String,path:String,?headers:Dynamic):ClientRequest;
-  function head(path:String,?headers:Dynamic):ClientRequest;
-  function del(path:String,?headers:Dynamic):ClientRequest;
-  function put(path:String,?headers:Dynamic):ClientRequest;
-  function setSecure(fmtType:String,caCerts:String,crlList:String,privKey:String,cert:String):Void;
+  function verifyPeer():Bool;
+  function getPeerCertificate():PeerCert;
 }
 
 typedef Http = {
@@ -232,6 +234,8 @@ typedef Stream = { > EventEmitter,
   function setKeepAlive(?enable:Bool,delay:Int):Void;
   function setNoDelay(d:Bool):Void;
   function verifyPeer():Int;
+  function setSecure(credentials:Credentials):Void;
+  function getPeerCertificate():PeerCert;
 }
 
 typedef Server = {
@@ -294,7 +298,7 @@ extern class Buffer implements ArrayAccess<Int> {
   function copy(targetBuffer:Dynamic,targetStart:Dynamic,start:Int,end:Int):Void;
   function slice(start:Int,end:Int):Void;
   function write(s:String,enc:String,offset:Int):Void;
-  function toString(enc:String,?start:Int,?stop:String):String;
+  function toString(enc:String,?start:Int,?stop:Int):String;
 }
 
 typedef Script =  {  
@@ -302,6 +306,15 @@ typedef Script =  {
   function runInNewContext(sandbox:Dynamic):Void;
 }
 
+typedef Dns = {
+  function resolve(domain:String,?rrtype:String,cb:NodeErr->Array<Dynamic>->Void):Void;
+  function resolve4(domain:String,cb:NodeErr->Array<String>->Void):Void;
+  function resolve6(domain:String,cb:NodeErr->Array<String>->Void):Void;
+  function resolveMx(domain:String,cb:NodeErr->Array<{priority:Int,exchange:String}>->Void):Void;
+  function resolveSrc(domain:String,cb:NodeErr->Array<{priority:Int,weight:Int,port:Int,name:String}->Void>):Void;
+  function reverse(ip:String,cb:NodeErr->Array<String>->Void):Void;
+}
+  
 class Node {
   // encodings ...
 
@@ -348,7 +361,6 @@ class Node {
   public static function
   exec(cmd:String,options:ExecOptions,fn:NodeErr->StdOut->StdErr->Void) {
     var cp:Dynamic = require('child_process');
-    trace("cp is "+cp);
     if (options != null)
       cp.exec(cmd,options,fn);
     else
@@ -367,6 +379,16 @@ class Node {
     return untyped __js__('new b.Script(code,fileName)');
   }
 
+  public static function
+  crypto():Crypto {
+    return require("crypto");
+  }
+
+  public static function
+  dns():Dns {
+    return require("dns");
+  }
+  
   public static function
   __init__() {
     require = untyped __js__('require');
