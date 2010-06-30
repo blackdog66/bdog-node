@@ -205,7 +205,7 @@ typedef ClientResponse = { > EventEmitter,
 }
 
 typedef ClientRequest = { > EventEmitter,
-  function sendBody(chunk:String,enc:String):Void;
+  function sendBody(chunk:String,?enc:String):Void;
   function end():Void;
 }
 
@@ -318,16 +318,44 @@ typedef Dns = {
 class Node {
   // encodings ...
 
-  public static var UTF8 = "utf8";
-  public static var ASCII = "ascii";
-  public static var BINARY = "binary";
+  public static inline var UTF8 = "utf8";
+  public static inline var ASCII = "ascii";
+  public static inline var BINARY = "binary";
 
   // process events ...
-
-  public static var UNCAUGHT_EXC = "uncaughtException";
-  public static var SIGINT = "SIGINT";
-  public static var SIGUSR1 = "SIGUSR1";
+  public static inline var UNCAUGHT_EXC = "uncaughtException";
+  public static inline var SIGINT = "SIGINT";
+  public static inline var SIGUSR1 = "SIGUSR1";
   
+  //events - thanks tmedema
+  public static inline var EVENT_EVENTEMITTER_NEWLISTENER = "newListener";
+  public static inline var EVENT_EVENTEMITTER_ERROR = "error";
+  public static inline var EVENT_STREAM_DATA = "data";
+  public static inline var EVENT_STREAM_END = "end";
+  public static inline var EVENT_STREAM_ERROR = "error";
+  public static inline var EVENT_STREAM_CLOSE = "close";
+  public static inline var EVENT_STREAM_DRAIN = "drain";
+  public static inline var EVENT_STREAM_CONNECT = "connect";
+  public static inline var EVENT_STREAM_SECURE = "secure";
+  public static inline var EVENT_STREAM_TIMEOUT = "timeout";
+  public static inline var EVENT_PROCESS_EXIT = "exit";
+  public static inline var EVENT_PROCESS_UNCAUGHTEXCEPTION = "uncaughtException";
+  public static inline var EVENT_PROCESS_SIGINT = "SIGINT";
+  public static inline var EVENT_PROCESS_SIGUSR1 = "SIGUSR1";
+  public static inline var EVENT_CHILDPROCESS_EXIT = "exit";
+  public static inline var EVENT_HTTPSERVER_REQUEST = "request";
+  public static inline var EVENT_HTTPSERVER_CONNECTION = "connection";
+  public static inline var EVENT_HTTPSERVER_CLOSE = "close";
+  public static inline var EVENT_HTTPSERVER_UPGRADE = "upgrade";
+  public static inline var EVENT_HTTPSERVER_CLIENTERROR = "clientError";
+  public static inline var EVENT_HTTPSERVERREQUEST_DATA = "data";
+  public static inline var EVENT_HTTPSERVERREQUEST_END = "end";
+  public static inline var EVENT_CLIENTREQUEST_RESPONSE = "response";
+  public static inline var EVENT_CLIENTRESPONSE_DATA = "data";
+  public static inline var EVENT_CLIENTRESPONSE_END = "end";
+  public static inline var EVENT_NETSERVER_CONNECTION = "connection";
+  public static inline var EVENT_NETSERVER_CLOSE = "close";
+
   public static var require:String->Dynamic;
   public static var paths:String;
   

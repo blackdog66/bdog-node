@@ -19,10 +19,13 @@ Partial Crypto.
 
 
 Compiling with haxe
-------------------- 
+-------------------
+
+NOTE: BEGIN_SRC is for emacs orgmode source highlighting
 
 For example, file Ex1.hx
 
+#+BEGIN_SRC haxe
 
 import js.Node;
 
@@ -38,6 +41,8 @@ class Ex1 {
    }
 
 }
+
+#+END_SRC
 
 Compile with
 
