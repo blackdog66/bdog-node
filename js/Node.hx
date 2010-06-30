@@ -321,11 +321,6 @@ class Node {
   public static inline var UTF8 = "utf8";
   public static inline var ASCII = "ascii";
   public static inline var BINARY = "binary";
-
-  // process events ...
-  public static inline var UNCAUGHT_EXC = "uncaughtException";
-  public static inline var SIGINT = "SIGINT";
-  public static inline var SIGUSR1 = "SIGUSR1";
   
   //events - thanks tmedema
   public static inline var EVENT_EVENTEMITTER_NEWLISTENER = "newListener";
