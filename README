@@ -11,7 +11,7 @@ Status
 
 The base Node API is in js/Node.hx. 
 
-API is now at 0.1.92
+API is now (more or less) at 0.1.99
 
 Note, I haven't wrapped Assert or REPL.
 Partially added Script, didn't do static methods.
