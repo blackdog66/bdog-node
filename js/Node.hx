@@ -129,8 +129,8 @@ typedef NodeFS = {
   function readdir(path:String,cb:NodeErr->Array<String>->Void):Void;
   function close(fd:Int,cb:NodeErr->Void):Void;
   function open(path:String,flags:Int,mode:Int,cb:NodeErr->Int->Void):Void;
-  function write(fd:Int,data:String,?position:Int,?enc:String,cb:NodeErr->Int->Void):Void;
-  function read(fd:Int,length:Int,position:Int,?enc:String,cb:NodeErr->String->Int->Void):Void;
+  function write(fd:Int,buffer:Buffer,offset:Int,length:Int,position:Null<Int>,cb:NodeErr->Int->Void):Void;
+  function read(fd:Int,buffer:Buffer,length:Int,position:Int,cb:NodeErr->Int->Void):Void;
   function truncate(fd:Int,len:Int,cb:NodeErr->Void):Void;
   function readFile(path:String,?enc:String,cb:NodeErr->String->Void):Void;
   function writeFile(fileName:String,contents:String,cb:NodeErr->Void):Void;
@@ -152,8 +152,8 @@ typedef NodeFS = {
   function readdirSync(path:String):Array<String>;
   function closeSync(fd:Int):Void;
   function openSync(path:String,flags:String,?mode:Int):Int;
-  function writeSync(fd:Int,data:String,?position:Int,?enc:String):Void;
-  function readSync(fd:Int,length:Int,position:Int,?enc:String):String;
+  function writeSync(fd:Int,buffer:Buffer,offset:Int,length:Int,position:Null<Int>):Int;
+  function readSync(fd:Int,buffer:Buffer,length:Int,position:Int):Int;
   function truncateSync(fd:Int,len:Int):NodeErr;
   
   function readFileSync(path:String,?enc:String):String;
