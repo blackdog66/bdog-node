@@ -34,6 +34,7 @@ typedef NodeSys = {
   function debug(s:String):Void;
   function inspect(o:Dynamic,?showHidden:Bool,?depth:Int):Void;
   function log(s:String):Void;
+  function pump(rs:ReadStream,ws:WriteStream,cb:Void->Void):Void;
 }
 
 typedef EventEmitter = {
@@ -51,6 +52,7 @@ typedef Process = { > EventEmitter,
   var pid:Int;
   var platform:String;
   var installPrefix:String;
+  var execPath:String;
   
   function memoryUsage():{rss:Int,vsize:Int,heapUsed:Int,heapTotal:Int};
   function nextTick(fn:Void->Void):Void;
@@ -67,6 +69,7 @@ typedef Process = { > EventEmitter,
   function evalcx(code:String,sandbox:Dynamic,fileName:String):Dynamic;
   function openStdin():ReadStream;
   function binding(s:String):Dynamic;
+  
 }
 
 typedef StreamOptions = {
@@ -297,7 +300,7 @@ extern class Buffer implements ArrayAccess<Int> {
   var length(default,null) : Int;
   function copy(targetBuffer:Dynamic,targetStart:Dynamic,start:Int,end:Int):Void;
   function slice(start:Int,end:Int):Void;
-  function write(s:String,enc:String,offset:Int):Void;
+  function write(s:String,?offset:Int,?enc:String):Void;
   function toString(enc:String,?start:Int,?stop:Int):String;
 }
 
@@ -314,7 +317,11 @@ typedef Dns = {
   function resolveSrc(domain:String,cb:NodeErr->Array<{priority:Int,weight:Int,port:Int,name:String}->Void>):Void;
   function reverse(ip:String,cb:NodeErr->Array<String>->Void):Void;
 }
-  
+
+typedef Console = {
+  function log(s:String):Void;
+}
+
 class Node {
   // encodings ...
 
@@ -374,6 +381,7 @@ class Node {
   public static var path:Path;
   public static var url:Url;
   public static var queryString:QueryString;
+  public static var console:Console;
   
   public static function
   spawn(cmd:String,prms:Array<String>,?env:Dynamic):ChildProcess {
@@ -434,6 +442,7 @@ class Node {
     path = require('path');
     url = require('url');
     queryString = require('querystring');
+    console = untyped __js__('console');
   }
   
 }
