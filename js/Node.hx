@@ -320,6 +320,9 @@ typedef Dns = {
 
 typedef Console = {
   function log(s:String):Void;
+  function info(s:String):Void;
+  function warn(s:String):Void;
+  function error(s:String):Void;
 }
 
 class Node {
