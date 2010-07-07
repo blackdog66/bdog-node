@@ -97,7 +97,7 @@ typedef WriteStream = { > EventEmitter,
   function destroy():Void;
 }
 
-typedef Stats = {
+typedef Stat = {
   var dev:Int;
   var ino:Int;
   var mode:Int;
@@ -123,8 +123,9 @@ typedef Stats = {
 typedef NodeFS = {
   // async
   function rename(from:String,to:String,cb:NodeErr->Void):Void;
-  function stat(path:String,cb:NodeErr->Stats->Void):Void;
-  function lstat(path:String,cb:NodeErr->Stats->Void):Void;
+  function stat(path:String,cb:NodeErr->Stat->Void):Void;
+  function fstat(fd:Int,cb:NodeErr->Stat->Void):Void;
+  function lstat(path:Dynamic,cb:NodeErr->Stat->Void):Void;
   function link(srcPath:String,dstPath:String,cb:NodeErr->Void):Void;
   function unlink(path:String,cn:NodeErr->Void):Void;
   function symlink(linkData:Dynamic,path:String,cb:NodeErr->Void):Void;
@@ -137,7 +138,7 @@ typedef NodeFS = {
   function close(fd:Int,cb:NodeErr->Void):Void;
   function open(path:String,flags:Int,mode:Int,cb:NodeErr->Int->Void):Void;
   function write(fd:Int,buffer:Buffer,offset:Int,length:Int,position:Null<Int>,cb:NodeErr->Int->Void):Void;
-  function read(fd:Int,buffer:Buffer,length:Int,position:Int,cb:NodeErr->Int->Void):Void;
+  function read(fd:Int,buffer:Buffer,offset:Int,length:Int,position:Int,cb:NodeErr->Int->Void):Void;
   function truncate(fd:Int,len:Int,cb:NodeErr->Void):Void;
   function readFile(path:String,?enc:String,cb:NodeErr->String->Void):Void;
   function writeFile(fileName:String,contents:String,cb:NodeErr->Void):Void;
@@ -146,8 +147,9 @@ typedef NodeFS = {
   // sync
 
   function renameSync(from:String,to:String):Void;
-  function statSync(path:String):Stats;
-  function lstatSync(path:String):Stats;
+  function statSync(path:String):Stat;
+  function fstatSync(fd:Int):Stat;
+  function lstatSync(path:Dynamic):Stat; // path or fd
   function linkSync(srcPath:String,dstPath:String):Void;
   function unlinkSync(path:String):Void;
   function symlinkSync(linkData:Dynamic,path:String):Void;
@@ -160,7 +162,7 @@ typedef NodeFS = {
   function closeSync(fd:Int):Void;
   function openSync(path:String,flags:String,?mode:Int):Int;
   function writeSync(fd:Int,buffer:Buffer,offset:Int,length:Int,position:Null<Int>):Int;
-  function readSync(fd:Int,buffer:Buffer,length:Int,position:Int):Int;
+  function readSync(fd:Int,buffer:Buffer,offset:Int,length:Int,position:Int):Int;
   function truncateSync(fd:Int,len:Int):NodeErr;
   
   function readFileSync(path:String,?enc:String):String;
@@ -169,7 +171,7 @@ typedef NodeFS = {
   
   // other
 
-  function watchFile(fileName:String,?options:Watch,listener:Stats->Stats->Void):Void;
+  function watchFile(fileName:String,?options:Watch,listener:Stat->Stat->Void):Void;
   function unwatchFile(fileName:String):Void;
 
   function createReadStream(path:String,?options:StreamOptions):ReadStream;
