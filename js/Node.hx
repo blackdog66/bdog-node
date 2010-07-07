@@ -1,3 +1,7 @@
+/* Same license as Node.js
+   Maintainer: Ritchie Turner, blackdog@ipowerhouse.com
+*/
+
 package js;
 
 typedef StdOut = Dynamic;
@@ -298,8 +302,8 @@ typedef QueryString = {
 
 extern class Buffer implements ArrayAccess<Int> {
   var length(default,null) : Int;
-  function copy(targetBuffer:Dynamic,targetStart:Dynamic,start:Int,end:Int):Void;
-  function slice(start:Int,end:Int):Void;
+  function copy(targetBuffer:Buffer,targetStart:Int,sourceStart:Int,sourceEnd:Int):Void;
+  function slice(start:Int,end:Int):Buffer;
   function write(s:String,?offset:Int,?enc:String):Void;
   function toString(enc:String,?start:Int,?stop:Int):String;
 }
@@ -402,9 +406,12 @@ class Node {
   }
   
   public static function
-  newBuffer(size:Int):Buffer {
+  newBuffer(d:Dynamic,?enc:String):Buffer {
     var b = require('buffer');
-    return untyped __js__('new b.Buffer(size)');
+    if (enc != null)
+      return untyped __js__('new b.Buffer(d,enc)');
+    else
+      return untyped __js__('new b.Buffer(d)');
   }
 
   public static function
