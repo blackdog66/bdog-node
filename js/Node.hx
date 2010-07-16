@@ -218,7 +218,7 @@ typedef ClientRequest = { > EventEmitter,
   function end():Void;
 }
 
-typedef Client = {
+typedef Client = { > EventEmitter,
   function request(method:String,path:String,?headers:Dynamic):ClientRequest;
   function verifyPeer():Bool;
   function getPeerCertificate():PeerCert;
@@ -339,6 +339,7 @@ class Node {
   public static inline var BINARY = "binary";
   
   //events - thanks tmedema
+  public static inline var EVENT_ERROR = "error";
   public static inline var EVENT_EVENTEMITTER_NEWLISTENER = "newListener";
   public static inline var EVENT_EVENTEMITTER_ERROR = "error";
   public static inline var EVENT_STREAM_DATA = "data";
