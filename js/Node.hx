@@ -88,7 +88,7 @@ typedef ReadStream = { > EventEmitter,
   function pause():Void;
   function resume():Void;
   function destroy():Void;
-  function setEncoding(enc:String);
+  function setEncoding(enc:String):Void;
 }
   
 typedef WriteStream = { > EventEmitter,
