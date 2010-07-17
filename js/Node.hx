@@ -88,12 +88,13 @@ typedef ReadStream = { > EventEmitter,
   function pause():Void;
   function resume():Void;
   function destroy():Void;
+  function setEncoding(enc:String);
 }
   
 typedef WriteStream = { > EventEmitter,
   var writable:Bool;
   function write(?d:Dynamic,?enc:String):Void;
-  function end():Void;
+  function end(?enc:String):Void;
   function destroy():Void;
 }
 
@@ -339,7 +340,6 @@ class Node {
   public static inline var BINARY = "binary";
   
   //events - thanks tmedema
-  public static inline var EVENT_ERROR = "error";
   public static inline var EVENT_EVENTEMITTER_NEWLISTENER = "newListener";
   public static inline var EVENT_EVENTEMITTER_ERROR = "error";
   public static inline var EVENT_STREAM_DATA = "data";
