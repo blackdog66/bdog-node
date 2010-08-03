@@ -9,9 +9,7 @@ typedef StdErr = Dynamic;
 typedef Watch = {persistant:Bool,interval:Int};
 typedef Listener = Dynamic;
 
-typedef NodeErr = {
-  var code:Int;
-}
+typedef NodeErr = Null<String>;
 
 typedef CredDetails = {
   var key:String;
@@ -371,7 +369,7 @@ class Node {
   public static inline var FILE_READ = "r";
   public static inline var FILE_READ_APPEND = "r+";
   public static inline var FILE_WRITE = "w";
-  public static inline var FILE_WRITE_APPEND = "w+";
+  public static inline var FILE_WRITE_APPEND = "a+";
   public static inline var FILE_READWRITE = "a";
   public static inline var FILE_READWRITE_APPEND = "a+";
 
@@ -407,7 +405,7 @@ class Node {
   }
 
   public static function
-  exec(cmd:String,options:ExecOptions,fn:NodeErr->StdOut->StdErr->Void) {
+  exec(cmd:String,options:ExecOptions,fn:{code:Int}->StdOut->StdErr->Void) {
     var cp:Dynamic = require('child_process');
     if (options != null)
       cp.exec(cmd,options,fn);
