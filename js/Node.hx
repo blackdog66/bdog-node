@@ -42,7 +42,7 @@ typedef NodeSys = {
 typedef EventEmitter = {
   function addListener(event:String,fn:Listener):Dynamic;
   function removeListener(event:String,listener:Listener):Void;
-  function removeAllListener(event:String):Void;
+  function removeAllListeners(event:String):Void;
   function listeners(event:String):Array<Listener>;
   function emit(event:String,?arg1:Dynamic,?arg2:Dynamic,?arg3:Dynamic):Void;
 }
