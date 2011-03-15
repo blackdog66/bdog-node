@@ -1,5 +1,4 @@
 
-
 import js.Node;
 
 class Ex1 {

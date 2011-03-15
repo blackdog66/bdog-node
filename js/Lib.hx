@@ -43,7 +43,7 @@ class Lib {
     #if !nodejs
     untyped __js__("alert")(js.Boot.__string_rec(v,""));
     #else
-    untyped js.Node.sys.print(js.Boot.__string_rec(v,""));
+    untyped js.Node.util.print(js.Boot.__string_rec(v,""));
     #end
   }
   
@@ -53,7 +53,7 @@ class Lib {
 
   public static function println(v:Dynamic) {
     #if nodejs
-    untyped js.Node.sys.puts(js.Boot.__string_rec(v,""));
+    untyped js.Node.util.print(js.Boot.__string_rec(v,"")+"\n");
     #end
   }
 
@@ -68,6 +68,7 @@ class Lib {
   
 	static function __init__() untyped {
 #if !nodejs
+    
       document = untyped __js__("document");
 	  window = untyped __js__("window");
 #end
